@@ -14,11 +14,12 @@ sns.set(style="darkgrid")
 check_model = '5'
 check_epoch = '-500'
 x_dataset = 'df13_50fps.csv'
-z_mean_dataset = 'mean_5-500_df13_50fps'
-z_sigma_dataset = 'sigma_5-500_df13_50fps'
+z_mean_dataset = '5-500_df13_50fps_mean.csv'
+z_sigma_dataset = '5-500_df13_50fps_sigma.csv'
+time_lag = 0.02
 save_stuff = True
-interp_steps = 2
-select = True
+interp_steps = 50
+select = False
 
 # Restore model to get the decoder
 model = load_model(check_model, check_epoch)
@@ -38,6 +39,7 @@ if select:
     anim_id_list = [anim]
 else:
     anim_id_list = df_anim['id'].unique().tolist()
+    anim_id_list = [x for x in anim_id_list if '_tr' not in x]
 
 for anim_id in anim_id_list:
 
@@ -66,7 +68,7 @@ for anim_id in anim_id_list:
     scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
     output_df = inverse_norm(output_df, scaler)
     # Add the time vector
-    output_df['time'] = np.linspace(0.02, (output_df.shape[0] + 1) * 0.02, output_df.shape[0])
+    output_df['time'] = np.linspace(time_lag, (output_df.shape[0] + 1) * 0.02, output_df.shape[0])
     # Label for the id
     output_df['id'] = 'GEN_' + anim_id
     # Label for the category

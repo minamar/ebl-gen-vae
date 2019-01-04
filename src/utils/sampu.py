@@ -29,6 +29,13 @@ def add_category(df):
     return df
 
 
+def downsample_anim(df, fps):
+    df_new = pd.DataFrame(columns=df.columns)
+    df_new = pd.concat([df_new, df[::fps]], ignore_index=True)
+
+    return df_new
+
+
 #  Interpolation functions ---------------------------------------------------------
 def slerp(val, low, high):
     """Spherical interpolation. val has a range of 0 to 1.
@@ -193,9 +200,12 @@ def get_latent_z(check_model, check_epoch, dataset):
     # Get the best dimensions of the latent space
     latent_sigma_mean = latent_sigma.mean(axis=0)
     dim = latent_mean.shape[1]  # Number of dimensions in the latent space
-    dim_inds = np.argsort(latent_sigma_mean)  # Prioritize
-    latent_z_mean = latent_mean[:, dim_inds].transpose()
-    latent_z_sigma = latent_sigma[:, dim_inds].transpose()
+    # dim_inds = np.argsort(latent_sigma_mean)  # Prioritize
+    # latent_z_mean = latent_mean[:, dim_inds].transpose()
+    # latent_z_sigma = latent_sigma[:, dim_inds].transpose()
+
+    latent_z_mean = latent_mean.transpose()
+    latent_z_sigma = latent_sigma.transpose()
 
     # Create column names for latent dimensions and put them in a dataframe
     l_dim_names = []
@@ -262,8 +272,9 @@ def differ_duplicate(dataset):
 
     df_anim.to_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset))
 
-
+#
 # if __name__ == '__main__':
-#     dataset = 'df23_50fps.csv'
+#     dataset = 'df13_50fps.csv'
 # # #     differ_duplicate(dataset)
+# #     for r in ['3', '4', '5']:
 #     get_latent_z('6', '-300', dataset)
