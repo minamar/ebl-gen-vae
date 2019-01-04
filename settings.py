@@ -7,7 +7,7 @@ DATA_Z_PATH = 'data/generated/latent_z'
 
 DATA_SAMP = 'data/generated/sampled'
 DATA_RECO = 'data/generated/reconstruction'
-DATA_VISU =  'data/visualizations'
+DATA_VISU = 'data/visualizations'
 
 ANIM_DIR = 'data/external/plymouth-animations_3'
 RAW_DATA = 'data/raw'
