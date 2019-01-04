@@ -1,13 +1,15 @@
 import pandas as pd
 import os
 from settings import *
-from src.utils.sampu import load_model, encode, decode, sel_rand_posture, interpolate
+from src.utils.sampu import load_model, decode, sel_anim_id, interpolate
 from src.utils.visu import z_anim2dec
 from src.data.post_processing import inverse_norm
 import seaborn as sns
 sns.set(style="darkgrid")
 
-""" """
+""" For a specific animation or all animations within the dataset it selects a z_mean posture every interp_steps
+    and applies interp_steps slerp interpolation between them. THe output is decoded to a generated animation(s).
+"""
 
 check_model = '5'
 check_epoch = '-500'
@@ -15,9 +17,8 @@ x_dataset = 'df13_50fps.csv'
 z_mean_dataset = 'mean_5-500_df13_50fps'
 z_sigma_dataset = 'sigma_5-500_df13_50fps'
 save_stuff = True
-action = 'n_pos'  # select n_postures from 1 anim
-n_postures = 4
 interp_steps = 2
+select = True
 
 # Restore model to get the decoder
 model = load_model(check_model, check_epoch)
@@ -30,18 +31,18 @@ df_z_sigma = pd.read_csv(os.path.join(ROOT_PATH, DATA_Z_PATH, z_sigma_dataset), 
 # Latent space dimensions - 2 cols for id and category
 z_dim = df_z_mean.shape[1] - 2
 
-if action == 'rand_interpolation':
-    df_pos = sel_rand_posture(df_anim, n_postures, 'select')
-    anim_id, category = df_anim.loc[df_pos.index, ['id', 'category']]
-    start_end = df_pos.index.values.tolist()
-    latent_mean, latent_sigma = encode(df_pos, model)
-    interp = interpolate(latent_mean[0], latent_mean[1], 100)
-
-else:
-    # anim_id, category = sel_anim_id(df_anim)
+if select:
     category = 'Pos/Exc'
-    anim_id = 'Confident_1'
+    anim = 'Confident_1'
+    # anim, category = sel_anim_id(df_anim)
+    anim_id_list = [anim]
+else:
+    anim_id_list = df_anim['id'].unique().tolist()
+
+for anim_id in anim_id_list:
+
     df_z_anim = df_z_mean.loc[df_z_mean['id'] == anim_id, :]
+    category = df_z_anim['category'].values[0]
     df_z_anim.drop(columns=['id', 'category'], inplace=True)
     df_z_anim.reset_index(drop=True, inplace=True)
 
@@ -58,27 +59,36 @@ else:
 
     interp[idx_pos[-1], :] = df_z_anim.iloc[idx_pos[-1], :].values
 
-gen_anim = decode(interp, model)
-output_df = pd.DataFrame(columns=joints_names, data=gen_anim)
+    gen_anim = decode(interp, model)
+    output_df = pd.DataFrame(columns=joints_names, data=gen_anim)
 
-# Inverse normalization
-scaler = 'j_scaler_nao_lim_df23_50fps.pkl'
-output_df = inverse_norm(output_df, scaler)
-# Add the time vector
-output_df['time'] = np.linspace(0.02, (output_df.shape[0] + 1) * 0.02, output_df.shape[0])
-# Label for the id
-output_df['id'] = 'GEN_' + anim_id
-# Label for the category
-output_df['category'] = category
+    # Inverse normalization
+    scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
+    output_df = inverse_norm(output_df, scaler)
+    # Add the time vector
+    output_df['time'] = np.linspace(0.02, (output_df.shape[0] + 1) * 0.02, output_df.shape[0])
+    # Label for the id
+    output_df['id'] = 'GEN_' + anim_id
+    # Label for the category
+    output_df['category'] = category
 
-fig = z_anim2dec(df_z_mean, interp, output_df, anim_id, category)
+    fig = z_anim2dec(df_z_mean, interp, output_df, anim_id, category)
 
-if save_stuff:
-    fig.savefig(os.path.join(ROOT_PATH, 'reports/vae/visualizations/interpolations',
-                             check_model + check_epoch + '-' + str(n_postures) + 'p-' + str(
-                                 interp_steps) + 'st-' + anim_id))
-    # Save generated
-    output_df.to_csv(os.path.join(ROOT_PATH, 'data/generated/generated_VAE/vae_sampled/interp_npostures_anim',
-                                  check_model + check_epoch + '-' + str(
-                                      interp_steps) + 'st-' + anim_id + '.csv'))
+    if save_stuff:
+        plot_path = os.path.join(ROOT_PATH, DATA_VISU, 'interp_nsteps_anim', check_model + check_epoch)
+        if not os.path.exists(plot_path):
+            os.makedirs(plot_path)
+        plot_path = os.path.join(plot_path, str(interp_steps) + '_steps')
+        if not os.path.exists(plot_path):
+            os.makedirs(plot_path)
+        fig.savefig(os.path.join(plot_path, anim_id + '.eps'), bbox_inches='tight', format='eps',
+                    dpi=1000)
+        # Save generated
+        df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_nsteps_anim', check_model + check_epoch)
+        if not os.path.exists(df_path):
+            os.makedirs(df_path)
+        df_path = os.path.join(df_path, str(interp_steps) + '_steps')
+        if not os.path.exists(df_path):
+            os.makedirs(df_path)
+        output_df.to_csv(os.path.join(df_path, anim_id + '.csv'))
 
