@@ -181,17 +181,10 @@ def decode(latent_mean, model):
 
 
 def get_latent_z(check_model, check_epoch, dataset):
-    # TODO: Correct for changes in columns structures
     """ Load a model and a dataset of animations and save df with their latent means and sigmas"""
     model = load_model(check_model, check_epoch)
     # Load animation dataset
     df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
-
-    # # Depending on animation library, different handling of category feature
-    # if 'df2' in dataset:  # Naoqi animation library
-    #     df_anim = add_category(df_anim)
-    # else:  # Plymouth animation library
-    #     df_anim = merge_with_labels(df_anim)
 
     # Get latent z vectors
     x = df_anim.drop(columns=['time', 'id', 'category'], inplace=False)
@@ -271,6 +264,6 @@ def differ_duplicate(dataset):
 
 
 # if __name__ == '__main__':
-#     dataset = 'df24_20fps.csv'
+#     dataset = 'df23_50fps.csv'
 # # #     differ_duplicate(dataset)
-#     get_latent_z('3', '-500', dataset)
+#     get_latent_z('6', '-300', dataset)

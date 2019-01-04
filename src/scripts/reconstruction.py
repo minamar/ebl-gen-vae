@@ -5,8 +5,8 @@ from src.utils.sampu import load_model, encode, decode
 from src.data.post_processing import inverse_norm
 
 
-check_model = '3'
-check_epoch = '-500'
+check_model = '6'
+check_epoch = '-300'
 x_dataset = 'df13_50fps.csv'
 scaler = 'j_scaler_nao_lim_df23_50fps.pkl'
 
