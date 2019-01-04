@@ -5,8 +5,8 @@ from src.utils.sampu import load_model, encode, decode
 from src.data.post_processing import inverse_norm
 
 
-check_model = '6'
-check_epoch = '-300'
+check_model = '3'
+check_epoch = '-500'
 x_dataset = 'df13_50fps.csv'
 scaler = 'j_scaler_nao_lim_df23_50fps.pkl'
 
@@ -43,5 +43,6 @@ output_df.to_csv(os.path.join(ROOT_PATH, DATA_RECO, check_model + check_epoch,
 ids = df_anim['id'].unique()
 for id_anim in ids:
     anim_output_df = output_df.loc[output_df['id'] == id_anim, :]
+    anim_output_df.reset_index(inplace=True, drop=True)
     anim_output_df.to_csv(os.path.join(ROOT_PATH, DATA_RECO,
                                        check_model + check_epoch + '/REC_' + id_anim + '.csv'))
