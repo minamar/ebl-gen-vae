@@ -18,7 +18,7 @@ z_mean_dataset = '5-500_df13_50fps_mean.csv'
 z_sigma_dataset = '5-500_df13_50fps_sigma.csv'
 time_lag = 0.02
 save_stuff = True
-interp_steps = 50
+interp_steps = 10
 select = False
 
 # Restore model to get the decoder

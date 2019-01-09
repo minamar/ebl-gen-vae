@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 from settings import *
 import seaborn as sns
 sns.set(style="darkgrid")
@@ -20,7 +21,7 @@ def set_pub():
     plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
-def z_anim2dec(df_z_mean, interp, output_df, anim_id, category):
+def z_anim2dec(df_z_mean, interp, output_df, anim_id):
     """ For an animation, plot the encoded + interpolated (dotted) latent space and the decoded output"""
 
     df_z_anim = df_z_mean.loc[df_z_mean['id'] == anim_id, :]
@@ -32,28 +33,31 @@ def z_anim2dec(df_z_mean, interp, output_df, anim_id, category):
 
     ax1 = fig.add_subplot(2, 1, 1)
 
-    ax1.plot(interp, linestyle=':', label='interp')
-    ax1.plot(df_z_anim.values, label='original')
-    # df_z_anim.plot(kind='line', ax=ax1)
-    ax1.set_title('latent_space animation', fontsize=20)
+    ax1.plot(interp, label=[])
+    ax1.set_prop_cycle(None)
+    ax1.plot(df_z_anim.values, linestyle=':', label=[])
+    # df_z_anim.plot(y=df_z_anim.columns.tolist()[:-2], linestyle='-.', ax=ax1)
+    ax1.set_title('Latent space animation: original and interpolation')
+    ax1.set_ylabel('Joints values')
+    handles, labels = ax1.get_legend_handles_labels()
+    labels = df_z_anim.columns.tolist()
+    lgd = ax1.legend(handles, labels, loc='center left', bbox_to_anchor=(0.96, 0.5))
 
     ax2 = fig.add_subplot(2, 1, 2)
-    # ax2.plot(output_df)
     output_df.plot(kind='line', y=joints_names, ax=ax2)
-    ax2.set_title('decoded animation based on interpolation')
+    ax2.set_title('Decoded animation based on interpolation')
     ax2.set_xlabel('Frames')
     ax2.set_ylabel('Joints values')
-    fig.suptitle('Animation: ' + anim_id + ', Category: ' + category, fontsize=20)
+
 
     ax2.get_legend().remove()
     ax2.legend(loc='center left', bbox_to_anchor=(0.96, 0.5))
-    # plt.tight_layout(pad=5)
     # plt.show()
 
     return fig
 
 
-def x2reco(df_x, df_z, df_reco):
+def x2reco(df_x, df_reco):
     """ Plot an original animation across time frames and its reconstruction """
 
     set_pub()
@@ -98,3 +102,40 @@ def x2reco(df_x, df_z, df_reco):
     # plt.show()
 
     return fig
+
+
+def x_all2z(df_z, colorcode='id'):
+    """ All the encoded animations in the latent space (color-coded per animation)"""
+    set_pub()
+    fig = plt.figure(figsize=(20, 18))
+
+    dim = df_z.shape[1] - 2
+    if dim <= 2:
+        ax = plt.axes()
+        sns.scatterplot(x='l1', y='l2', hue=colorcode, data=df_z, legend=False)
+    else:
+        ax = plt.axes(projection='3d')
+
+        if colorcode == 'id':
+            ids = df_z['id'].unique().tolist()
+            ids = [x for x in ids if '_tr' not in x]
+        else:
+            ids = all_categories
+
+        for colc in ids:
+            df = df_z.loc[df_z[colorcode] == colc, :]
+            ax.scatter(df['l1'], df['l2'], df['l3'], label=colc)
+
+            ax.set_xlabel('l1')
+            ax.set_ylabel('l2')
+            ax.set_zlabel('l3')
+
+    ax.set_title('Animations encoded in latent space')
+    ax.axis('equal')
+    ax.axis('square')
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(0.96, 0.5))
+    plt.show()
+
+    return fig
+

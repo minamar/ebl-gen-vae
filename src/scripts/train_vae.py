@@ -1,22 +1,22 @@
 import pandas as pd
 import tensorflow as tf
-from src.tfmodellib.vae import VAE, VAEConfig, variational_loss, build_vae_latent_layers
+from tfmodellib.vae import VAE, VAEConfig, variational_loss, build_vae_latent_layers
 from settings import *
 import os
 import time
 import seaborn as sns
 sns.set(style="darkgrid")
 
-dataset = 'df23_50fps.csv'
+dataset = 'df24_20fps.csv'
 
 lr = 0.0001
-latent_range = [5]
+latent_range = [10]
 batch = 128
 encoder = [128, 512, 128]
 decoder = None
-n_epoch = 301
+n_epoch = 501
 wu = False  # Warm-up
-beta = 0.001
+beta = 0.0001
 beta_range = np.linspace(0.0001, 0.01, n_epoch)
 kern_init = 'xavier_uniform'
 save_overview = True
@@ -53,7 +53,7 @@ for latent_size in latent_range:
             summaries_root=os.path.join(ROOT_PATH, 'reports', 'summaries'),
             checkpoints_root=os.path.join(ROOT_PATH, 'reports', 'checkpoints'),
             step_summaries_interval=1,
-            saver_interval=100,  # How often to save a checkpoint
+            saver_interval=50,  # How often to save a checkpoint
     )
     model = VAE(conf)
 
