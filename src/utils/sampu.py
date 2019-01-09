@@ -55,9 +55,9 @@ def slerp(val, low, high):
 def interpolate(z_p1, z_p2, n_points):
     """ Interpolate between the latent means of two postures.
         n_points indicates how many points will be sampled from the latent space
+        The interpolation parameters are evenly spaced.
     """
-    int_val = 1 / n_points
-    interp = np.array([slerp(t, z_p1, z_p2) for t in np.arange(0.0, 1.0, int_val)])
+    interp = np.array([slerp(t, z_p1, z_p2) for t in list(np.linspace(0.0001, 1.0, n_points))])
     return interp
 
 
@@ -272,9 +272,9 @@ def differ_duplicate(dataset):
 
     df_anim.to_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset))
 
-#
-# if __name__ == '__main__':
-#     dataset = 'df13_50fps.csv'
-# # #     differ_duplicate(dataset)
-# #     for r in ['3', '4', '5']:
-#     get_latent_z('6', '-300', dataset)
+
+if __name__ == '__main__':
+    dataset = 'df14_20fps.csv'
+# #     differ_duplicate(dataset)
+#     for r in ['3', '4', '5']:
+    get_latent_z('1', '-500', dataset)
