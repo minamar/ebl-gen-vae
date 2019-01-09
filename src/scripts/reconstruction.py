@@ -5,9 +5,9 @@ from src.utils.sampu import load_model, encode, decode
 from src.data.post_processing import inverse_norm
 
 
-check_model = '9'
+check_model = '1'
 check_epoch = '-500'
-x_dataset = 'df13_50fps.csv'
+x_dataset = 'df14_20fps.csv'
 scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
 
 
@@ -35,7 +35,13 @@ output_df['time'] = df_anim['time']
 output_df['category'] = df_anim['category']
 output_df['id'] = df_anim['id']
 
-dest = os.path.join(ROOT_PATH, DATA_RECO, check_model + check_epoch)
+dest = os.path.join(ROOT_PATH, DATA_RECO, x_dataset.split('.')[0])
+
+if not os.path.exists(dest):
+    os.makedirs(dest)
+
+dest = os.path.join(dest, check_model + check_epoch)
+
 if not os.path.exists(dest):
     os.makedirs(dest)
 
