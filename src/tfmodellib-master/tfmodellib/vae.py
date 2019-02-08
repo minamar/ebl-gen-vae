@@ -246,7 +246,7 @@ class VAE(MLP):
             with tf.variable_scope('loss'):
                 self.loss = tf.add(self.reconstruction_losses, self.beta * self.variational_losses)
                 self.rec_loss = self.reconstruction_losses  #ANIMA
-                self.var_loss = self.variational_losses  #ANIMA
+                self.var_loss = self.variational_losses #ANIMA
 
         # define optimizer
         with tf.control_dependencies(self.graph.get_collection(tf.GraphKeys.UPDATE_OPS)):
@@ -288,10 +288,10 @@ if __name__ == '__main__':
             output_activation=None,
             reconstruction_loss=tf.losses.mean_squared_error,
             use_bn=False,
-            summaries_root='/home/mina/Dropbox/APRIL-MINA/ebl-gen-seq/reports/vae/summaries',
-            checkpoints_root=None,
+            summaries_root='/home/mina/Dropbox/APRIL-MINA/ebl-gen-vae/reports/summaries',
+            checkpoints_root='/home/mina/Dropbox/APRIL-MINA/ebl-gen-vae/reports/checkpoints',
             step_summaries_interval=10,
-            saver_interval=None
+            saver_interval=50
             )
     model = VAE(conf)
 
@@ -312,15 +312,16 @@ if __name__ == '__main__':
     x_valid = x[x_train.shape[0]:]
 
     # run the training
-    for t in range(501):
-        training_loss, validation_loss = model.train(
-                                                        train_inputs=x_train,
-                                                        train_targets=x_train,
-                                                        validation_inputs=x_valid,
-                                                        validation_targets=x_valid,
-                                                        batch_size=1000,
-                                                        learning_rate=0.01,
-                                                        beta=0.1)
+    for t in range(51):
+        model.train(
+                train_inputs=x_train,
+                train_targets=x_train,
+                validation_inputs=x_valid,
+                validation_targets=x_valid,
+                batch_size=1000,
+                learning_rate=0.01,
+                beta=0.01)
+
 
         # print('Train_loss' + str(training_loss))
         # print('Valid_loss' + str(validation_loss))

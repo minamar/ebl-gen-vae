@@ -8,12 +8,12 @@ from src.utils.sampu import load_model, encode
     a plot of all the encoded animations in the latent space, color coded per anim and per category  
 """
 
-check_model = '12'
+check_model = '31'
 check_epoch_list = ['-500']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
 scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
-x_dataset = 'df14_20fps.csv'
+x_dataset = 'df25_10fps.csv'
 ccode = 'id'  # How to colorcode the animations in latent space
-save_stuff = True
+save_stuff = False
 all_epochs = True
 dataset_dir = x_dataset.split('.')[0]
 
@@ -48,6 +48,25 @@ for check_epoch in check_epoch_list:
     df_z_mean['category'] = df_x['category']
 
     fig = x_all2z(df_z_mean, ccode)
+
+    # GRAPH: Bar plot mean of latent dimensions standard deviations across postures
+    import matplotlib.pyplot as plt
+    fig2 = plt.figure(figsize=(12, 5))
+
+    ax1 = fig2.add_subplot(1, 2, 1)
+    ax1.bar(range(latent_sigma_mean.size), latent_sigma_mean[dim_inds])
+    ax1.set_title('mean across postures\' standard deviations')
+    ax1.set_xlabel('latent dimension')
+    ax1.set_ylabel('sigma')
+
+    # Bar plot mean standard deviation of latent dimensions
+    ax1 = fig2.add_subplot(1, 2, 2)
+    ax1.bar(range(np.std(latent_mean, axis=0).size), np.std(latent_mean[:, dim_inds], axis=0))
+    ax1.set_title('standard deviation of the means across postures')
+    ax1.set_xlabel('latent dimension')
+    ax1.set_ylabel('mean')
+
+    plt.show()
 
     if save_stuff:
         plot_path = os.path.join(ROOT_PATH, DATA_VISU, 'latent_z', dataset_dir)

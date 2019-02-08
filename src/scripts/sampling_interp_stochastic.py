@@ -24,8 +24,8 @@ z_mean_dataset = '5-500_df14_20fps_mean.csv'
 z_sigma_dataset = '5-500_df14_20fps_sigma.csv'
 time_lag = 0.02
 save_stuff = True
-interp_steps = 30
-select = True
+interp_steps = 20
+select = False
 dataset_dir = x_dataset.split('.')[0]
 
 # Restore model to get the decoder
@@ -39,7 +39,7 @@ df_z_sigma = pd.read_csv(os.path.join(ROOT_PATH, DATA_Z_PATH, z_sigma_dataset), 
 # Latent space dimensions - 2 cols for id and category
 z_dim = df_z_mean.shape[1] - 2
 
-eps = 1 + np.random.rand()
+eps = np.random.rand()
 
 # Transform latent
 df_z_mean_new = df_z_mean.copy(deep=True)

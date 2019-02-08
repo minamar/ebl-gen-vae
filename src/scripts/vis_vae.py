@@ -14,11 +14,11 @@ sns.set(style="darkgrid")
 
 check_model = '3'
 check_epoch = '-500'
-save_stuff = True
+save_stuff = False
 
 start = time.time()
 
-check_path = os.path.join(ROOT_PATH, REPORTS_PATH, 'checkpoints', check_model)
+check_path = os.path.join(ROOT_PATH, 'reports', 'checkpoints', check_model)
 
 # Restore the configuration of the model
 conf_restored = VAEConfig()

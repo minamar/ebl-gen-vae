@@ -22,7 +22,7 @@ def set_pub():
 
 
 def z_anim2dec(df_z_mean, interp, output_df, anim_id):
-    """ For an animation, plot the encoded + interpolated (dotted) latent space and the decoded output"""
+    """ For an animation, plot the encoded (dotted) + interpolated latent space and the decoded output"""
 
     df_z_anim = df_z_mean.loc[df_z_mean['id'] == anim_id, :]
     df_z_anim.drop(columns=['id', 'category'], inplace=True)
@@ -109,7 +109,7 @@ def x_all2z(df_z, colorcode='id'):
     set_pub()
     fig = plt.figure(figsize=(20, 18))
 
-    dim = df_z.shape[1] - 2
+    dim = df_z.shape[1] - 2  # This is -2 for df with both category and id, just id then becomes -1. horrible, i know
     if dim <= 2:
         ax = plt.axes()
         sns.scatterplot(x='l1', y='l2', hue=colorcode, data=df_z, legend=False)
