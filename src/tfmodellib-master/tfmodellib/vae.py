@@ -171,7 +171,7 @@ def build_vae_graph(
         # decoder_out = tf.contrib.layers.layer_norm(decoder_out)  #ANIMA
 
         reconstruction = tf.layers.dense(
-                inputs=decoder_out, units=input_tensor.shape.as_list()[1], activation=tf.sigmoid)  #ANIMA
+                inputs=decoder_out, units=input_tensor.shape.as_list()[1], activation=tf.sigmoid, name='rec_layer')  #ANIMA
 
     return reconstruction, latent_layer, latent_mean, latent_sigma, latent_sigma_sq, latent_log_sigma_sq
 

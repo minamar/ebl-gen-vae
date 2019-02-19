@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from settings import *
+
 import seaborn as sns
-sns.set(style="darkgrid")
-# sns.set_palette(sns.color_palette("Paired", 12))
+sns.set(style="whitegrid")
+
 
 
 def set_pub():
@@ -104,10 +105,10 @@ def x2reco(df_x, df_reco):
     return fig
 
 
-def x_all2z(df_z, colorcode='id'):
+def x_all2z(df_z, colorcode='id', leg=True):
     """ All the encoded animations in the latent space (color-coded per animation)"""
     set_pub()
-    fig = plt.figure(figsize=(20, 18))
+    fig = plt.figure(figsize=(10, 10))
 
     dim = df_z.shape[1] - 2  # This is -2 for df with both category and id, just id then becomes -1. horrible, i know
     if dim <= 2:
@@ -133,9 +134,25 @@ def x_all2z(df_z, colorcode='id'):
     ax.set_title('Animations encoded in latent space')
     ax.axis('equal')
     ax.axis('square')
-    handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(0.96, 0.5))
-    plt.show()
+    if leg:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(0.96, 0.5))
+    plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
 
     return fig
+
+
+def plot_3D_curve(curve, show_controlpoints=False):
+    t = np.linspace(curve.start(), curve.end(), 150)
+    x = curve(t)
+    fig = plt.gcf()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot(x[:,0], x[:,1], x[:,2])
+    ax.set_xlabel('x-axis')
+    ax.set_ylabel('y-axis')
+    ax.set_zlabel('z-axis')
+    if show_controlpoints:
+        plt.plot(curve[:, 0], curve[:, 1], curve[:,2],'rs-')
+    plt.show()
+
 
