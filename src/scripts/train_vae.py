@@ -5,16 +5,17 @@ from settings import *
 import os
 import time
 import seaborn as sns
+import numpy
 sns.set(style="darkgrid")
 
-dataset = 'df24_20fps.csv'
+dataset = 'df14_20fps.csv'
 
 lr = 0.0001
 latent_range = [3]
 batch = 32
-encoder = [128]
-decoder = None
-n_epoch = 501
+encoder = [128, 512, 512, 128]
+decoder = [128, 128, 128]
+n_epoch = 201
 wu = False  # Warm-up
 beta = 0.001
 beta_range = np.linspace(0.0001, 0.01, n_epoch)
@@ -26,6 +27,7 @@ df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_
 # Load anims
 df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
 df_postures = df_anim.drop(columns=['time', 'id', 'category'], inplace=False)
+
 x = df_postures.values
 
 # Shuffle data here. Permutation(x)
@@ -82,5 +84,8 @@ for latent_size in latent_range:
                                      conf['encoder_size'][::-1], batch, prefetch, lr, beta, conf['use_dropout'],
                                      conf['use_bn'], wu, kern_init, "{0:.4f}".format(tr_loss), "{0:.4f}".format(val_loss), "{0:.4f}".format(rec_loss), "{0:.4f}".format(var_loss)]
         df_over.to_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'))
+
+        numpy.savetxt(os.path.join(ROOT_PATH, 'data/tr_val_sets/') + str(model.summaries_ind) + "_x_train.csv", x_train, delimiter=",")
+        numpy.savetxt(os.path.join(ROOT_PATH, 'data/tr_val_sets/') + str(model.summaries_ind) + "_x_valid.csv", x_valid, delimiter=",")
 
     print("Total time: " + str(time.time()-start))

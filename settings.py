@@ -21,11 +21,11 @@ all_categories = ['Pos/Exc', 'Neu/Cal', 'Neu/Tir', 'Neu/Exc', 'Neg/Cal', 'Neg/Ti
 n_joints = 17  # 17 joints
 n_categories = 8
 
-# STandInit posture without the time dimension
+# StandInit posture without the time dimension (radians)
 standInit = [-0.2, 0.0, -0.0399996, -0.0, -0.0099995, -0.5225337, -1.2282506, 0.6, 1.5596846, 0.1427103, -0.0004972,
              0.5225337, 1.2282506, 0.6, 1.5596846, -0.1427103, 0.0004972]
 
-# Normalized standInit posture with *naoqi* limits
+# Normalized standInit posture with *naoqi* limits (radians)
 standInit_norm = [0.37715381, 0.5, 0.48074111, 0.5, 0.49028934, 0.66922499, 0.20554991, 0.60416665, 0.87390519,
                   0.08625503, 0.4998637, 0.33077501, 0.79445009, 0.60416665, 0.87390519, 0.91374497, 0.5001363]
 
@@ -37,7 +37,7 @@ joints_names = ['HeadPitch', 'HeadYaw', 'HipPitch', 'HipRoll', 'KneePitch', 'LEl
 out_cols = joints_names + ['time']
 
 
-# Min-max ranges of joints
+# Min-max ranges of joints (radians)
 joints_minmax = np.array([[-0.7068583369255066, 0.6370452046394348],  # 'HeadPitch' 0
                           [-2.0856685638427734, 2.0856685638427734],  # 'HeadYaw'  0
                           [-1.0384708642959595, 1.0384708642959595],  # 'HipPitch'  0
@@ -56,7 +56,8 @@ joints_minmax = np.array([[-0.7068583369255066, 0.6370452046394348],  # 'HeadPit
                           [-1.5620696544647217, -0.008726646192371845],  # 'RShoulderRoll'  -1
                           [-1.8238691091537476, 1.8238691091537476]])  # 'RWristYaw'   0
 
-# Timestamps diffferences cannot be smaller than these limits: Calculated as abs(max-min)/maxVelocity per joint
+# Timestamps diffferences cannot be smaller than these limits:
+# Calculated as abs(max-min)/maxVelocity per joint (radians)
 maxVelocity_lims = {'LShoulderPitch': 0.5683034521145831, 'LShoulderRoll': 0.1683374199825035,
                     'LHand': 0.07643312001973787, 'LElbowYaw': 0.5683034521145831, 'LWristYaw': 0.20983935340878543,
                     'KneePitch': 0.3511173243852647, 'HipRoll': 0.45356705168743694,
