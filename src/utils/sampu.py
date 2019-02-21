@@ -45,6 +45,7 @@ def interpolate(z_p1, z_p2, n_points, method):
     """ Interpolate between the latent means of two postures.
         n_points indicates how many points will be sampled from the latent space
         The interpolation parameters are evenly spaced.
+        Returns an array n_points x 3
     """
     if method == 'slerp':
         interp = np.array([slerp(t, z_p1, z_p2) for t in list(np.linspace(0, 1, n_points))])
@@ -57,62 +58,78 @@ def interpolate(z_p1, z_p2, n_points, method):
     return interp
 
 
-def spline(x, y):
-    cs = CubicSpline(x, y)
-    return cs
-
-
-def bezier(posA, posB, steps=100, dist_scale=3.):
-    """ Input is two lists of latent postures (each z posture as a list of 3D point - (l1,l2,l3))
+def bspline(z_pos, steps=100, dist_scale=3.):
+    """ Input is a array of latent postures (each z posture as a list of 3D point - (l1,l2,l3))
         and dist_scale (the higher it is, the lower is dist and the smaller is the curve).
         Returns a Bezier curve object with 4 control points  (including start and end)
     """
-    pos = [posA, posB]
 
-    # Euclidean distance between the two postures scaled by
-    dist = np.linalg.norm(np.array(pos[0]) - np.array(pos[1])) / dist_scale
+    n_pos = z_pos.shape[0]
 
-    # Get a line between the two postures and add two equidistant points on the line
-    l = curve_factory.line(pos[0], pos[1])
-    l.raise_order(2)
+    if n_pos >= 4:
+        curve = curve_factory.cubic_curve(z_pos, boundary=2)
+        t = np.linspace(curve.start(), curve.end(), steps * (n_pos-1))
+        interp = curve(t)
 
-    # 4X3 array-like (4 lists with 3 elements each -xyz). Start pos, cp1, cp2, end pos
-    pts = l.controlpoints
-    # Scale cp1 and cp2 on y and z according to distance
-    pts[1, 1] = pts[1, 1] - dist
-    pts[2, 1] = pts[2, 1] + dist
-    pts[1, 2] = pts[1, 2] + dist
-    pts[2, 2] = pts[2, 2] - dist
+        return interp
 
-    # Cubic bezier with two extra control points in between start and end posture
-    curve = curve_factory.bezier(pts)
-    t = np.linspace(curve.start(), curve.end(), steps)
-    interp = curve(t)
+    elif n_pos == 2:
+        # Estimate a Bezier curve between the two postures
+        pos = z_pos.tolist()
+        # Euclidean distance between the two postures scaled by
+        dist = np.linalg.norm(np.array(pos[0]) - np.array(pos[1])) / dist_scale
 
-    return interp
+        # Get a line between the two postures and add two equidistant points on the line
+        l = curve_factory.line(pos[0], pos[1])
+        l.raise_order(2)
+
+        # 4X3 array-like (4 lists with 3 elements each -xyz). Start pos, cp1, cp2, end pos
+        pts = l.controlpoints
+        # Scale cp1 and cp2 on y and z according to distance
+        pts[1, 1] = pts[1, 1] - dist
+        pts[2, 1] = pts[2, 1] + dist
+        pts[1, 2] = pts[1, 2] + dist
+        pts[2, 2] = pts[2, 2] - dist
+
+        # Cubic bezier with two extra control points in between start and end posture
+        curve = curve_factory.bezier(pts)
+        t = np.linspace(curve.start(), curve.end(), steps)
+        interp = curve(t)
+
+        return interp
+
+    else:
+        print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
-def interp_2pos(posA, posB, steps, check_model, check_epoch, method):
-    """ Given two normalized postures in lists, interpolate between them
+def interp_multi(pos_list, steps, check_model, check_epoch, method):
+    """ Given a list of two or more normalized postures, interpolate between them
         The latent interpolant is then decoded, and inverse normalized back to radians
     """
     # Restore model to get the decoder
     model = load_model(check_model, check_epoch)
-    df = pd.DataFrame(np.array([posA, posB]))
+    df = pd.DataFrame(np.array(pos_list))
     latent_mean, latent_sigma = encode(df, model)
 
-    if method == 'spline':
-        cs = spline([0, 1], latent_mean)
-        xs = np.arange(-2, 2, 0.04)
-        interp = cs(xs)
-    elif method == 'bezier':
-        interp = bezier(list(latent_mean[0, :]), list(latent_mean[-1, :]), steps=100, dist_scale=3.)
-    else:
-        interp = interpolate(latent_mean[0, :], latent_mean[-1, :], steps, method)
+    interp_all = []
 
+    if method == 'bspline':
+        interp = bspline(latent_mean, steps=100, dist_scale=3.)
+    else:
+        for i in range(latent_mean.shape[0] -1):
+            interp_i = interpolate(latent_mean[i, :], latent_mean[i + 1, :], steps, method)
+            interp_all.append(interp_i)
+
+        interp = np.concatenate(interp_all)
+
+    # Get the def of the z interpolant
     df_z_interp = pd.DataFrame(interp)
-    gen_anim = decode(interp, model)
-    df_dec_interp = pd.DataFrame(columns=joints_names, data=gen_anim)
+    df_z_interp.columns = ['l1', 'l2', 'l3']
+    df_z_interp['interp_method'] = method
+
+    # Get decoded denormalized latent interpolant
+    dec_interp = decode(interp, model)
+    df_dec_interp = pd.DataFrame(columns=joints_names, data=dec_interp)
     scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
     df_dec_interp_norm = inverse_norm(df_dec_interp, scaler)
 

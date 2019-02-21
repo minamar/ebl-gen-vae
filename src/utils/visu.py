@@ -153,6 +153,6 @@ def plot_3D_curve(curve, show_controlpoints=False):
     ax.set_zlabel('z-axis')
     if show_controlpoints:
         plt.plot(curve[:, 0], curve[:, 1], curve[:,2],'rs-')
-    plt.show()
+    return fig
 
 

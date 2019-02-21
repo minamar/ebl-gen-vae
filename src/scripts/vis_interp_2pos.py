@@ -17,10 +17,9 @@ mode = 'latent' # No dim reduction. Vis latent interpolants vs encoded choregrap
 
 # All in radians, decoded, normalized
 x_dataset = [ 'slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
-
 # All in radians, decoded, normalized
-z_dataset = ['slerp_z_42-200_Loving_01_465.csv', 'lerp_z_42-200_Loving_01_465.csv', 'bezier_z_42-200_Loving_01_465.csv']
-
+# z_dataset = ['slerp_z_42-200_Loving_01_465.csv', 'lerp_z_42-200_Loving_01_465.csv', 'bezier_z_42-200_Loving_01_465.csv']
+z_dataset = ['0_z_bspline.csv', '1_z_slerp.csv', '2_z_lerp.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
@@ -40,11 +39,11 @@ if mode == 'tsne':
 
     for data in x_dataset:
         # Load animation dataset
-        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_2postures', data), index_col=0)
+        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_multi_pos', data), index_col=0)
         name = data.split('_')[0]
         df_tsne[name] = tsne(df, 1)
 
-    df_tsne['radian-bezier'] = tsne(x_naoqi, 1)
+    df_tsne['naoqi-bezier'] = tsne(x_naoqi, 1)
 
     df_tsne.plot(ax=ax)
     plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
@@ -54,15 +53,14 @@ elif mode == 'latent':
     fig = plt.figure(figsize=(10, 10))
     ax = plt.axes(projection='3d')
 
-    # Encode the normalized naoqi
-    # Restore model to get the decoder
-    model = load_model(check_model, check_epoch)
-    latent_mean, latent_sigma = encode(x_naoqi.loc[:, joints_names], model)
-
-    df_z_all = pd.DataFrame(latent_mean)
-    df_z_all.columns = ['l1', 'l2', 'l3']
-    df_z_all['interp'] = 'naoqi-bezier'
-    ax.plot(df_z_all['l1'], df_z_all['l2'], df_z_all['l3'], label='naoqi-bezier')
+    # # Encode the normalized naoqi
+    # model = load_model(check_model, check_epoch)
+    # latent_mean, latent_sigma = encode(x_naoqi.loc[:, joints_names], model)
+    #
+    # df_z_all = pd.DataFrame(latent_mean)
+    # df_z_all.columns = ['l1', 'l2', 'l3']
+    # df_z_all['interp'] = 'naoqi-bezier'
+    # ax.plot(df_z_all['l1'], df_z_all['l2'], df_z_all['l3'], label='naoqi-bezier')
 
     # # ======= Subsequent enc-dec-enc
     # df_dec_slerp = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_2postures', 'slerp_42-200_Loving_01_465.csv'), index_col=0)
@@ -83,15 +81,11 @@ elif mode == 'latent':
     # # ========
 
     for data in z_dataset:
-        # Load animation dataset
-        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_2postures', data), index_col=0)
-        df.columns = ['l1', 'l2', 'l3', 'interp']
+        # Load the z interpolants
+        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_multi_pos', data), index_col=0)
         df['interp'] = 'vae_' + data.split('_')[0]
         ax.plot(df['l1'], df['l2'], df['l3'], label= 'vae_' + data.split('_')[0])
-        # df_z_all = pd.concat([df_z_all, df], axis=0).reset_index(drop=True)
 
-    # ax.plot(df_z_all['l1'], df_z_all['l2'], df_z_all['l3'], label=df_z_all['interp'])
-    # df_z_all.plot(ax=ax, value_name='interp')
     ax.set_xlabel('l1')
     ax.set_ylabel('l2')
     ax.set_zlabel('l3')
@@ -100,8 +94,6 @@ elif mode == 'latent':
     # ax.axis('equal')
     # ax.axis('square')
     ax.legend()
-    # handles, labels = ax.get_legend_handles_labels()
-    # ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(0.96, 0.5))
 
     plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
     plt.show()

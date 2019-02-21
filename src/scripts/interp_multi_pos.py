@@ -1,42 +1,67 @@
 import pandas as pd
 import os
+import json
 from settings import *
-from src.utils.sampu import interp_2pos, sel_pos_frame
+from src.utils.sampu import interp_multi, sel_pos_frame
 import seaborn as sns
 sns.set(style="darkgrid")
 
 check_model = '42'
 check_epoch = '-200'
-method = 'lerp'  # slerp, lerp, bezier
-nsteps = 100
+method = 'bspline'  # slerp, lerp, bspline
+nsteps = 100    # per segment
 fr = 0.06
-frame = 465
+frames = [0, 188]  # Has to be 2 or 4 or higher. Add 0 for standInit
 x_dataset = 'df14_KF.csv'  # 'df14_KF.csv': radians, normalized in [0,1]
 
 
-# Load animation dataset and z_means
+# Load keyframes dataset
 df = pd.read_csv(os.path.join(ROOT_PATH, 'data/processed/keyframes/', x_dataset), index_col=0)
 
-posA = standInit_norm
-posB, id_anim = sel_pos_frame(df, frame)
+pos_list = []
+id_anim_list = []
 
-# Get the radians frames generated from laten interpolant
-output_df, df_z_interp = interp_2pos(posA, posB, nsteps, check_model, check_epoch, method)
+for frame in frames:
+    if frame == 0:
+        pos_list.append(standInit_norm)  # List of lists
+        id_anim_list.append('standInit_0')
+    else:
+        pos, id_anim = sel_pos_frame(df, frame)
+        pos_list.append(pos)  # List of lists
+        id_anim_list.append(id_anim + '_f' + str(frame))
 
-output_df['id'] = id_anim + '_' + str(frame)
+# Get the radians frames (dec, denorm) and the latent interpolants
+df_dec_interp, df_z_interp = interp_multi(pos_list, nsteps, check_model, check_epoch, method)
 
-end = output_df.shape[0] * fr + 0.02
+# Add 'time' column based on frequency fr
+end = df_dec_interp.shape[0] * fr + 0.02
+df_dec_interp['time'] = list(np.arange(0.02, end, fr))
 
-output_df['time'] = list(np.arange(0.02, end, fr))
+# Save path
+df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_multi_pos')
 
-df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_2postures')
+# Prepare the overview
+json_file = os.path.join(df_path, '-overview.json')
 
-output_df.to_csv(os.path.join(df_path, method + '_' + check_model + check_epoch + '_' + output_df.loc[0, 'id'] + '.csv'))
+with open(json_file, 'r') as fd:
+    files_dict = json.load(fd)
 
-df_z_interp['interp'] = method
-df_z_interp.to_csv(os.path.join(df_path, method + '_' + 'z' + '_' + check_model + check_epoch + '_' + output_df.loc[0, 'id'] + '.csv'))
-# frame 252, 'Fearful' from df14_KF
-# posB = [0.652216347589752, 0.3144962438895381, 0.5372509258275667, 0.4124938990517932, 0.4422894920178799,
-#         0.23146740282176015, 0.5309949774788336, 0.5156781149799264, 0.3699707180121343, 0.053170899809992,
-#         0.6205521504119926, 0.9110618130472923, 0.8354058404193228, 0.7041614444806631, 0.7235819968218229,
-#         0.8405977500971131, 0.3620784719863175]
+file_id = len(files_dict)
+
+files_dict[file_id] = {
+    'file_id': file_id,
+    'interp_method': method,
+    'interp_steps': nsteps,
+    'frequency': fr,
+    'model': check_model + check_epoch,
+    'animations': id_anim_list,
+    'frames': frames
+}
+
+with open(json_file, 'w') as fd:
+    fd.write(json.dumps(files_dict))
+
+# Save
+df_dec_interp.to_csv(os.path.join(df_path, str(file_id) + '_dec_' + method + '.csv'))
+df_z_interp.to_csv(os.path.join(df_path, str(file_id) + '_z_' + method + '.csv'))
+
