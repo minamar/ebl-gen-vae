@@ -17,8 +17,7 @@ mode = 'latent' # No dim reduction. Vis latent interpolants vs encoded choregrap
 
 # All in radians, decoded, normalized
 x_dataset = [ 'slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
-# All in radians, decoded, normalized
-# z_dataset = ['slerp_z_42-200_Loving_01_465.csv', 'lerp_z_42-200_Loving_01_465.csv', 'bezier_z_42-200_Loving_01_465.csv']
+# All in latent space
 z_dataset = ['0_z_bspline.csv', '1_z_slerp.csv', '2_z_lerp.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
