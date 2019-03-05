@@ -5,20 +5,23 @@ from src.utils.sampu import tsne, encode, load_model, decode
 from src.utils.visu import set_pub
 import matplotlib.pyplot as plt
 from sklearn.externals import joblib
-
 from mpl_toolkits import mplot3d
-import seaborn as sns
-sns.set(style="darkgrid")
+# import seaborn as sns
+# sns.set(style="whitegrid")
+
+""" Visualize the latent interpolants sampled by interp_multi_pos or the tsne of their decoded animations """
 
 check_model = '42'
 check_epoch = '-200'
 # mode = 'tsne' # Dim reduction on the decoded latent interpolants (normalized) and choregraphe trajectory
 mode = 'latent' # No dim reduction. Vis latent interpolants vs encoded choregraph trajectory
 
+# Directory with sampled anims
+gen_vae_dir = 'interp_unit_gaussian'
 # All in radians, decoded, normalized
-x_dataset = [ 'slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
+x_dataset = ['slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
 # All in latent space
-z_dataset = ['0_z_bspline.csv', '1_z_slerp.csv', '2_z_lerp.csv']
+z_dataset = ['3_z_spline.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
@@ -38,7 +41,7 @@ if mode == 'tsne':
 
     for data in x_dataset:
         # Load animation dataset
-        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_multi_pos', data), index_col=0)
+        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, data), index_col=0)
         name = data.split('_')[0]
         df_tsne[name] = tsne(df, 1)
 
@@ -52,6 +55,7 @@ elif mode == 'latent':
     fig = plt.figure(figsize=(10, 10))
     ax = plt.axes(projection='3d')
 
+    # Repeatedly encode the decoded to see how the generated animation is changing
     # # Encode the normalized naoqi
     # model = load_model(check_model, check_epoch)
     # latent_mean, latent_sigma = encode(x_naoqi.loc[:, joints_names], model)
@@ -81,9 +85,15 @@ elif mode == 'latent':
 
     for data in z_dataset:
         # Load the z interpolants
-        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, 'interp_multi_pos', data), index_col=0)
-        df['interp'] = 'vae_' + data.split('_')[0]
-        ax.plot(df['l1'], df['l2'], df['l3'], label= 'vae_' + data.split('_')[0])
+        df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, data), index_col=0)
+        label = data.split('.')[0].split('_')[2]
+        ax.plot(df['l1'], df['l2'], df['l3'], label=label)
+
+    ax.annotate('axes fraction',
+                xy=(3, 1), xycoords='data',
+                xytext=(0.8, 0.95), textcoords='axes fraction',
+                arrowprops=dict(facecolor='black', shrink=0.05),
+                horizontalalignment='right', verticalalignment='top')
 
     ax.set_xlabel('l1')
     ax.set_ylabel('l2')
