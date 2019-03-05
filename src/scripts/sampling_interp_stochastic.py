@@ -6,9 +6,7 @@ from src.utils.visu import z_anim2dec
 from src.data.post_processing import inverse_norm
 import seaborn as sns
 sns.set(style="darkgrid")
-# mina_pal = ["#000000","#004949","#009292","#ff6db6","#ffb6db","#490092","#006ddb","#b66dff","#6db6ff","#b6dbff", "#920000","#924900","#db6d00","#24ff24","#ffff6d"]
-# sns.set_palette(mina_pal)
-# sns.palplot(sns.color_palette("colorblind", 10))
+
 
 """ For a specific animation or all animations within the dataset it selects a z_mean posture every interp_steps, 
     adds noise to it (same for different z), and applies interp_steps slerp interpolation between them. 
