@@ -4,6 +4,7 @@ from settings import *
 from tfmodellib.vae import VAE, VAEConfig
 from scipy.interpolate import CubicSpline
 import numpy as np
+from sklearn.externals import joblib
 from src.data.post_processing import inverse_norm
 from sklearn.manifold import TSNE
 from splipy import *
@@ -58,10 +59,9 @@ def interpolate(z_p1, z_p2, n_points, method):
     return interp
 
 
-def bspline(z_pos, steps=100, dist_scale=3.):
+def bspline(z_pos, steps=100):
     """ Input is a array of latent postures (each z posture as a list of 3D point - (l1,l2,l3))
-        and dist_scale (the higher it is, the lower is dist and the smaller is the curve).
-        Returns a Bezier curve object with 4 control points  (including start and end)
+        Returns a spline interpolation
     """
 
     n_pos = z_pos.shape[0]
@@ -73,48 +73,28 @@ def bspline(z_pos, steps=100, dist_scale=3.):
 
         return interp
 
-    elif n_pos == 2:
-        # Estimate a Bezier curve between the two postures
-        pos = z_pos.tolist()
-        # Euclidean distance between the two postures scaled by
-        dist = np.linalg.norm(np.array(pos[0]) - np.array(pos[1])) / dist_scale
-
-        # Get a line between the two postures and add two equidistant points on the line
-        l = curve_factory.line(pos[0], pos[1])
-        l.raise_order(2)
-
-        # 4X3 array-like (4 lists with 3 elements each -xyz). Start pos, cp1, cp2, end pos
-        pts = l.controlpoints
-        # Scale cp1 and cp2 on y and z according to distance
-        pts[1, 1] = pts[1, 1] - dist
-        pts[2, 1] = pts[2, 1] + dist
-        pts[1, 2] = pts[1, 2] + dist
-        pts[2, 2] = pts[2, 2] - dist
-
-        # Cubic bezier with two extra control points in between start and end posture
-        curve = curve_factory.bezier(pts)
-        t = np.linspace(curve.start(), curve.end(), steps)
-        interp = curve(t)
-
-        return interp
-
     else:
         print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
-def interp_multi(pos_list, steps, check_model, check_epoch, method):
+def interp_multi(pos_list, latent, steps, check_model, check_epoch, method):
     """ Given a list of two or more normalized postures, interpolate between them
         The latent interpolant is then decoded, and inverse normalized back to radians
     """
     # Restore model to get the decoder
     model = load_model(check_model, check_epoch)
-    df = pd.DataFrame(np.array(pos_list))
-    latent_mean, latent_sigma = encode(df, model)
+
+    # latent=True for interp the latent space directly without encoding keyframes before
+    if latent:
+        latent_mean = np.array(pos_list)
+    else:
+        df = pd.DataFrame(np.array(pos_list))
+        latent_mean, latent_sigma = encode(df, model)
 
     interp_all = []
 
-    if method == 'bspline':
-        interp = bspline(latent_mean, steps=100, dist_scale=3.)
+    if method == 'spline':
+        interp = bspline(latent_mean, steps=100)
     else:
         for i in range(latent_mean.shape[0] -1):
             interp_i = interpolate(latent_mean[i, :], latent_mean[i + 1, :], steps, method)
@@ -248,7 +228,10 @@ def encode(df, model):
     """ Given a df with frames (i.e. postures) and a model, encode them in the latent space.
         It returns their latent mean, latent sigma vectors (arrays)
     """
-    x = df.values
+    if isinstance(df, pd.DataFrame):
+        x = df.values
+    elif isinstance(df, list):
+        x = np.asarray(df).reshape([1, 17])
     latent_mean, latent_sigma = model.sess.run([model.latent_mean, model.latent_sigma],
                                                feed_dict={model.x_input: x, model.bn_is_training: False})
     return latent_mean, latent_sigma
@@ -379,8 +362,22 @@ def downsample_anim(df, fps):
     return df_new
 
 
+# TODO: Normalize Input can be list array or df
+def normalize(list_pos):
+    scaler_pkl = 'j_scaler_nao_lim_df13_50fps.pkl'
+    path = os.path.join(ROOT_PATH, SCALERS_PATH, scaler_pkl)
+    scaler = joblib.load(path)
+    if isinstance(list_pos, list):
+        pos_norm_list = scaler.transform(np.array(list_pos).reshape([1, n_joints]))
+    else:
+        pos_norm_list = scaler.transform(list_pos.loc[:, joints_names])
+    pos_norm_df = pd.DataFrame(columns=joints_names, data=pos_norm_list)
+
+    return pos_norm_list.tolist()[0]
+
+
 if __name__ == '__main__':
     dataset = 'df14_20fps.csv'
 # #     differ_duplicate(dataset)
 #     for r in ['3', '4', '5']:
-    get_latent_z('1', '-500', dataset)
+    get_latent_z('42', '-200', dataset)

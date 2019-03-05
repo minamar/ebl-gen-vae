@@ -131,7 +131,7 @@ def x_all2z(df_z, colorcode='id', leg=True):
             ax.set_ylabel('l2')
             ax.set_zlabel('l3')
 
-    ax.set_title('Animations encoded in latent space')
+    ax.set_title('Animations encoded in the latent space')
     ax.axis('equal')
     ax.axis('square')
     if leg:
