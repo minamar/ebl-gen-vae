@@ -2,22 +2,27 @@ import pandas as pd
 import os
 import json
 from settings import *
-from src.utils.sampu import interp_multi, sel_pos_frame
+from src.utils.sampu import interp_multi, sel_pos_frame, normalize
 import seaborn as sns
 sns.set(style="darkgrid")
 
-check_model = '42'
-check_epoch = '-200'
-method = 'bspline'  # slerp, lerp, bspline
+
+"""Given some keyframes numbers (normalized), encode them and interpolate through them in the latent space
+    Save the z interpolants and teh decoded animations in df. 
+"""
+check_model = '50'
+check_epoch = '-500'
+method = 'lerp'  # slerp, lerp, bspline
 nsteps = 100    # per segment
 fr = 0.06
-frames = [0, 188]  # Has to be 2 or 4 or higher. Add 0 for standInit
+frames = [0, 0, 0, 0]  # Has to be 2 or 4 or higher. Add 0 for standInit
 x_dataset = 'df14_KF.csv'  # 'df14_KF.csv': radians, normalized in [0,1]
-
+latent = False  # latent=True for interp the latent space directly without encoding keyframes before
 
 # Load keyframes dataset
 df = pd.read_csv(os.path.join(ROOT_PATH, 'data/processed/keyframes/', x_dataset), index_col=0)
 
+# Postures in radians
 pos_list = []
 id_anim_list = []
 
@@ -30,8 +35,15 @@ for frame in frames:
         pos_list.append(pos)  # List of lists
         id_anim_list.append(id_anim + '_f' + str(frame))
 
+
+# Normalization scaler
+pos_list.append(normalize([0.184811, 0, -0.00595384, -0.00569751, -0.00260995,-0.0117632, -0.00302939, 0.026704, -1.06408,  0.205128,-0.00904274,  0.0118227, 0.00282017,0.0266633,-1.05311, -0.17415, 0.00901861]))
+id_anim_list.append('Hands_up')
+
+
+
 # Get the radians frames (dec, denorm) and the latent interpolants
-df_dec_interp, df_z_interp = interp_multi(pos_list, nsteps, check_model, check_epoch, method)
+df_dec_interp, df_z_interp = interp_multi(pos_list, latent, nsteps, check_model, check_epoch, method)
 
 # Add 'time' column based on frequency fr
 end = df_dec_interp.shape[0] * fr + 0.02
