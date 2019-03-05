@@ -3,38 +3,58 @@ import tensorflow as tf
 from tfmodellib.vae import VAE, VAEConfig, variational_loss, build_vae_latent_layers
 from settings import *
 import os
+import random
 import time
 import seaborn as sns
 import numpy
 sns.set(style="darkgrid")
 
 dataset = 'df14_20fps.csv'
-
+split = 'anim'
 lr = 0.0001
 latent_range = [3]
 batch = 32
-encoder = [128, 512, 512, 128]
-decoder = [128, 128, 128]
-n_epoch = 201
+encoder = [128, 512, 128]
+decoder = [128, 512, 128]
+n_epoch = 501
 wu = False  # Warm-up
 beta = 0.001
 beta_range = np.linspace(0.0001, 0.01, n_epoch)
 kern_init = 'xavier_uniform'
 save_overview = True
 
+
 df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_col=0, skipinitialspace=True)
 
 # Load anims
 df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
-df_postures = df_anim.drop(columns=['time', 'id', 'category'], inplace=False)
 
-x = df_postures.values
+if split == 'anim':
+    # TODO: pick 80% of the ids to form the training set
 
-# Shuffle data here. Permutation(x)
-np.random.shuffle(x)
+    ids = df_anim['id'].unique().tolist()
+    train_idx = random.sample(range(0, 72), 58)  # 72 animations in total, 58 for train and the rest for validation
+    id_train = list( ids[i] for i in train_idx )
+    df_train = df_anim.loc[df_anim['id'].isin(id_train), :]
+    df_valid = df_anim.loc[~df_anim['id'].isin(id_train), :]
+    id_valid = df_valid['id'].unique().tolist()
+    id_train.sort()
+    id_valid.sort()
 
-x_train = x[:int(x.shape[0]*0.8)]
-x_valid = x[x_train.shape[0]:]
+    x_train = df_train.drop(columns=['time', 'id', 'category'], inplace=False).values
+    x_valid = df_valid.drop(columns=['time', 'id', 'category'], inplace=False).values
+
+    np.random.shuffle(x_train)
+    np.random.shuffle(x_valid)
+
+else:
+    df_postures = df_anim.drop(columns=['time', 'id', 'category'], inplace=False)
+    x = df_postures.values
+    # Shuffle data here. Permutation(x)
+    np.random.shuffle(x)
+
+    x_train = x[:int(x.shape[0]*0.8)]
+    x_valid = x[x_train.shape[0]:]
 
 for latent_size in latent_range:
     prefetch = batch
