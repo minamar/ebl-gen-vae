@@ -32,6 +32,18 @@ plt.show()
 from splipy import *
 from splipy.utils import smooth
 
+
+def plot_3D_surface(surface):
+    u = np.linspace(surface.start('u'), surface.end('u'), 30)
+    v = np.linspace(surface.start('v'), surface.end('v'), 30)
+    x = surface(u,v)
+    fig = plt.gcf()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(  x[:,:,0], x[:,:,1], x[:,:,2])
+    ax.plot_wireframe(x[:,:,0], x[:,:,1], x[:,:,2], edgecolor='k', linewidth=1)
+    plt.show()
+
+
 def plot_3D_curve(curve, show_controlpoints=False):
     t = np.linspace(curve.start(), curve.end(), 150)
     x = curve(t)
@@ -46,35 +58,42 @@ def plot_3D_curve(curve, show_controlpoints=False):
     plt.show()
 
 
+
+
+sphere = surface_factory.sphere()
+plt.title('surface_factory.sphere')
+plot_3D_surface(sphere)
+
+
 pos = [[0., 0., 0], [1., 1., 1.], [0.2, 0.2, 0.2]]
 
 dist = np.linalg.norm(np.array(pos[0])-np.array(pos[1])) / 3.
 l = curve_factory.line(pos[0], pos[1])
-l.raise_order(2)
+l.raise_order(1)
 plot_3D_curve(l, show_controlpoints=True)
 
 pts = l.controlpoints
 pts[1,1] = pts[1,1] - dist
-pts[2, 1] = pts[2, 1] + dist
+# pts[2, 1] = pts[2, 1] + dist
 pts[1, 2] = pts[1, 2] + dist
-pts[2, 2] = pts[2, 2] - dist
+# pts[2, 2] = pts[2, 2] - dist
 
-c = curve_factory.bezier(pts)
+# c = curve_factory.bezier(pts)
 
 dist2 = np.linalg.norm(np.array(pos[1])-np.array(pos[2])) / 3.
 l2 = curve_factory.line(pos[1], pos[2])
-l2.raise_order(2)
+l2.raise_order(1)
 plot_3D_curve(l2, show_controlpoints=True)
 
 pts2 = l2.controlpoints
 pts2[1,1] = pts2[1,1] - dist2
-pts2[2, 1] = pts2[2, 1] + dist2
+# pts2[2, 1] = pts2[2, 1] + dist2
 pts2[1, 2] = pts2[1, 2] + dist2
-pts2[2, 2] = pts2[2, 2] - dist2
+# pts2[2, 2] = pts2[2, 2] - dist2
 
-c2 = curve_factory.bezier(pts2)
-
-pts_comb = pts.tolist()[0:3] + pts2.tolist()
+# c2 = curve_factory.bezier(pts2)
+# rebuild(p, n)
+pts_comb = pts.tolist()[0:-1] + pts2.tolist()
 # pts_comb = [pts.tolist()[0:3], pts2.tolist()]
 
 # Cubic bezier needs two extra control points in between start and stop
