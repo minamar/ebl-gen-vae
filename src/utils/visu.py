@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from settings import *
-
+import pandas as pd
+import os
 import seaborn as sns
 sns.set(style="whitegrid")
 
@@ -156,3 +157,27 @@ def plot_3D_curve(curve, show_controlpoints=False):
     return fig
 
 
+def plot_z_VA():
+    z = '42-200_df14_20fps_mean.csv'
+    df_z = pd.read_csv(os.path.join(ROOT_PATH, DATA_LATE, z), index_col=0)
+    labels = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, 'y_va_cat_aug.csv'), index_col=0)
+
+    df_all = pd.merge(df_z, labels, left_on="id", right_on="nameAnim", how='left')
+
+    df_z_V = df_all.loc[:, ['l1', 'l2', 'l3', 'valence_mean']]
+    fig = plt.figure(figsize=(6, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    p = ax.scatter(df_z_V.loc[:, 'l1'], df_z_V.loc[:, 'l2'], df_z_V.loc[:, 'l3'], c=df_z_V.loc[:, 'valence_mean'], s=df_z_V.loc[:, 'valence_mean']*25, marker='o')
+    fig.colorbar(p)
+
+
+    df_z_A = df_all.loc[:, ['l1', 'l2', 'l3', 'arousal_mean']]
+    fig2 = plt.figure(figsize=(6, 6))
+    ax2 = fig2.add_subplot(111, projection='3d')
+    p2 = ax2.scatter(df_z_A.loc[:, 'l1'], df_z_A.loc[:, 'l2'], df_z_A.loc[:, 'l3'], c=df_z_A.loc[:, 'arousal_mean'], s=df_z_A.loc[:, 'arousal_mean']*25, marker='o')
+    fig2.colorbar(p2)
+    plt.show()
+
+if __name__ == '__main__':
+
+    plot_z_VA()
