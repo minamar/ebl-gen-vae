@@ -6,6 +6,7 @@ from src.utils.visu import set_pub
 import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 from mpl_toolkits import mplot3d
+import matplotlib.animation as animation
 # import seaborn as sns
 # sns.set(style="whitegrid")
 
@@ -17,11 +18,11 @@ check_epoch = '-200'
 mode = 'latent' # No dim reduction. Vis latent interpolants vs encoded choregraph trajectory
 
 # Directory with sampled anims
-gen_vae_dir = 'interp_unit_gaussian'
+gen_vae_dir = 'interp_grid'
 # All in radians, decoded, normalized
 x_dataset = ['slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
 # All in latent space
-z_dataset = ['3_z_spline.csv']
+z_dataset = ['14_z_slerp.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
@@ -33,6 +34,19 @@ x_naoqi = scaler.transform(x_naoqi.loc[:, joints_names])
 x_naoqi = pd.DataFrame(columns=joints_names, data=x_naoqi)
 # Plot settings
 set_pub()
+
+
+# def animate(i, data, line):
+#     line.set_xdata(data[i, ])
+#     line.set_ydata(df.loc[i, 'l2'])
+#     line.set_ydata(df.loc[i, 'l3'])
+#     return line
+
+def update_plot(frame_number, zarray, plot):
+    # plot[0].remove()
+    # plot[0] = ax.plot(zarray[frame_number, 0], zarray[frame_number, 1], zarray[frame_number, 2])
+    plot.set_data(zarray[:2, :frame_number])
+    plot.set_3d_properties(zarray[2, :frame_number])
 
 if mode == 'tsne':
     df_tsne = pd.DataFrame()
@@ -86,26 +100,31 @@ elif mode == 'latent':
     for data in z_dataset:
         # Load the z interpolants
         df = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, data), index_col=0)
+        zarray = df.loc[:, ['l1', 'l2', 'l3']].values.transpose()
+
         label = data.split('.')[0].split('_')[2]
-        ax.plot(df['l1'], df['l2'], df['l3'], label=label)
+        # ax.plot(df['l1'], df['l2'], df['l3'], label=label)
+        plot, = ax.plot(zarray[0, 0:1], zarray[1, 0:1], zarray[2, 0:1])
 
-    ax.annotate('axes fraction',
-                xy=(3, 1), xycoords='data',
-                xytext=(0.8, 0.95), textcoords='axes fraction',
-                arrowprops=dict(facecolor='black', shrink=0.05),
-                horizontalalignment='right', verticalalignment='top')
+        # Setting the axes properties
+        ax.set_xlim3d([zarray[0].min(), zarray[0].max()])
+        ax.set_ylim3d([zarray[0].min(), zarray[0].max()])
+        ax.set_zlim3d([zarray[0].min(), zarray[0].max()])
 
-    ax.set_xlabel('l1')
-    ax.set_ylabel('l2')
-    ax.set_zlabel('l3')
+        ax.set_xlabel('l1')
+        ax.set_ylabel('l2')
+        ax.set_zlabel('l3')
 
-    ax.set_title('Interpolants in the latent space')
-    # ax.axis('equal')
-    # ax.axis('square')
-    ax.legend()
+        ax.set_title('Interpolants in the latent space')
+        # ax.axis('equal')
+        # ax.axis('square')
+        # ax.legend()
 
-    plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
-    plt.show()
+        plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
+
+        ani = animation.FuncAnimation(fig, update_plot, zarray.shape[1], fargs=(zarray, plot), interval=100, blit=False)
+
+        plt.show()
 
 else:
     pass
