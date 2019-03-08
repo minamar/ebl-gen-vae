@@ -377,7 +377,7 @@ def normalize(list_pos):
 
 
 if __name__ == '__main__':
-    dataset = 'df14_20fps.csv'
+    dataset = 'df24_20fps.csv'
 # #     differ_duplicate(dataset)
 #     for r in ['3', '4', '5']:
-    get_latent_z('42', '-200', dataset)
+    get_latent_z('47', '-500', dataset)
