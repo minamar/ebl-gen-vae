@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import json
 import glob
+import re
 from settings import *
 from src.utils.sampu import tsne, encode, load_model, decode
 from src.utils.visu import set_pub
@@ -22,8 +23,12 @@ mode = 'avg'
 # Directory with sampled anims
 gen_vae_dir = 'interp_grid'
 
+re1 = r'(1[0-1]|[0-9])_(dec)'
+re2 = r'(1[2-9]|2[0-3])_(dec)'
+
 path_to_folder = os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir)
-itemList = os.listdir(path_to_folder)
+# itemList = os.listdir(path_to_folder)
+itemList = [f for f in os.listdir(path_to_folder) if re.match(re2, f)]
 # All in radians, decoded, normalized
 x_dataset = [item for item in itemList if "dec" in item]
 
@@ -36,7 +41,6 @@ set_pub()
 df = pd.DataFrame()
 for data in x_dataset:
     label = data.split('_')[0]
-
     radius = details[label]['grid_radius']
     df_data = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, data), index_col=0)
     df_data.drop(columns='time', inplace=True)
@@ -53,7 +57,7 @@ ax = df_mean.plot(title='Decoded joints trajectories', sort_columns=True, colorm
 ax.set(xlabel="frames", ylabel="mean joint angles (radians)")
 ax.legend(title='radius')
 
-# To plot each joint separately
+# Plot each joint separately
 # for i, j in zip(range(17), joints_names):
 #     dfu = df[j]
 #     dfu.plot(title=joints_names[i])
