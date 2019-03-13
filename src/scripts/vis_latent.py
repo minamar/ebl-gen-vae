@@ -8,12 +8,12 @@ from src.utils.sampu import load_model, encode
     a plot of all the encoded animations in the latent space, color coded per anim and per category  
 """
 
-check_model = '33'
+check_model = '42'
 check_epoch_list = ['-200']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
 scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
 x_dataset = 'df14_20fps.csv'
 ccode = 'id'  # How to colorcode the animations in latent space
-save_stuff = True
+save_stuff = False
 all_epochs = True
 dataset_dir = x_dataset.split('.')[0]
 

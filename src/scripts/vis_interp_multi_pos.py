@@ -18,11 +18,11 @@ check_epoch = '-200'
 mode = 'latent' # No dim reduction. Vis latent interpolants vs encoded choregraph trajectory
 
 # Directory with sampled anims
-gen_vae_dir = 'interp_grid'
+gen_vae_dir = 'interp_unit_gaussian'
 # All in radians, decoded, normalized
-x_dataset = ['slerp_42-200_Loving_01_465.csv', 'lerp_42-200_Loving_01_465.csv', 'bezier_42-200_Loving_01_465.csv']
+x_dataset = ['37_dec_slerp.csv']
 # All in latent space
-z_dataset = ['14_z_slerp.csv']
+z_dataset = ['39_z_slerp.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
@@ -103,8 +103,8 @@ elif mode == 'latent':
         zarray = df.loc[:, ['l1', 'l2', 'l3']].values.transpose()
 
         label = data.split('.')[0].split('_')[2]
-        # ax.plot(df['l1'], df['l2'], df['l3'], label=label)
-        plot, = ax.plot(zarray[0, 0:1], zarray[1, 0:1], zarray[2, 0:1])
+        ax.plot(df['l1'], df['l2'], df['l3'], label=label)
+        # plot, = ax.plot(zarray[0, 0:1], zarray[1, 0:1], zarray[2, 0:1])
 
         # Setting the axes properties
         ax.set_xlim3d([zarray[0].min(), zarray[0].max()])
@@ -122,7 +122,7 @@ elif mode == 'latent':
 
         plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
 
-        ani = animation.FuncAnimation(fig, update_plot, zarray.shape[1], fargs=(zarray, plot), interval=100, blit=False)
+        # ani = animation.FuncAnimation(fig, update_plot, zarray.shape[1], fargs=(zarray, plot), interval=100, blit=False)
 
         plt.show()
 
