@@ -10,11 +10,11 @@ sns.set(style="darkgrid")
 
 check_model = '42'
 check_epoch = '-200'
-methods = ['spline']  # slerp, lerp, spline
-nsteps = 100    # per segment
+methods = ['slerp']  # slerp, lerp, spline
+nsteps = 40    # per segment
 fr = 0.06
-n_pos = 5
-std = 2  # Sampling radius
+n_pos = 6
+std = 3  # Sampling radius
 
 
 # Save path
