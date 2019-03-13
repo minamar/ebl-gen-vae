@@ -23,9 +23,9 @@ df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid')
 for radius in radiuses:
     phi = np.linspace(0, np.pi, long)     # 10 times the perimeter, parallel to z axis (longitude)
     theta = np.linspace(0, 2 * np.pi, lat)    # (latidude) in parallel to x,y plane
-    z = radius * np.outer(np.sin(theta), np.cos(phi))
-    x = radius * np.outer(np.sin(theta), np.sin(phi))
-    y = radius * np.outer(np.cos(theta), np.ones_like(phi))
+    y = radius * np.outer(np.sin(theta), np.cos(phi))
+    z = radius * np.outer(np.sin(theta), np.sin(phi))
+    x = radius * np.outer(np.cos(theta), np.ones_like(phi))  #
 
     # fig, ax = plt.subplots(1, 1, subplot_kw={'projection':'3d', 'aspect':'equal'})
     # ax.plot_wireframe(x, y, z, color='k', rstride=1, cstride=1)
