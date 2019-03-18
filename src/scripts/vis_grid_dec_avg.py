@@ -12,7 +12,6 @@ import seaborn as sns
 sns.set(style="whitegrid")
 
 """ Visualize the decoded joints trajectories for different radius on a longitudinal interpolation grid style. 
-    In tsne mode it is done by dimensionality reduction
     In avg mode, average across joints
 """
 
@@ -21,7 +20,7 @@ check_epoch = '-200'
 mode = 'avg'
 
 # Directory with sampled anims
-gen_vae_dir = 'interp_grid'
+gen_vae_dir = 'interp_grid_longitude'
 
 re1 = r'(1[0-1]|[0-9])_(dec)'
 re2 = r'(1[2-9]|2[0-3])_(dec)'
@@ -51,28 +50,22 @@ for i in range(3):
 
         df = pd.concat([df, df_data], axis=0)
 
-
     df = df.pivot(columns='radius')
 
     df_mean = df.mean(axis=1, level=1)
     df_mean.columns = df_mean.columns.rename('')
     df_plot = df_mean # .loc[0:500]
     df_plot.plot(sort_columns=True, colormap='gist_heat', ax=ax[i], yticks=np.arange(-0.4, 0.6, 0.2), xticks=np.arange(0, df_plot.shape[0], 100), legend=False)
-    k = None
+
 ax[2].set(xlabel="frames")
 ax[1].set(ylabel="mean joint angles (radians)")
 ax[1].legend(title='radius', loc='center left', bbox_to_anchor=(0.96, 0.5))
 
 plt.tight_layout()
 
-# Plot each joint separately
-# for i, j in zip(range(17), joints_names):
-#     dfu = df[j]
-#     dfu.plot(title=joints_names[i])
-#
-
 plt.show()
 
+# Frequency analysis
 # df_l1 = df_mean
 # df_l2 = df_mean
 # df_l3 = df_mean
