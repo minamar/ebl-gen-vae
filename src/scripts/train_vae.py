@@ -10,7 +10,10 @@ import numpy
 sns.set(style="darkgrid")
 
 dataset = 'df14_20fps.csv'
-split = 'anim'
+split = None
+subset = pos_neu_ids
+# 'Emotions/Positive'
+
 lr = 0.0001
 latent_range = [3]
 batch = 32
@@ -29,12 +32,17 @@ df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_
 # Load anims
 df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
 
-if split == 'anim':
-    # TODO: pick 80% of the ids to form the training set
+if subset is not None:
+    df_anim = df_anim.loc[df_anim['id'].isin(subset), :]
+    df_anim.reset_index(drop=True, inplace=True)
+    print("Number of animations: ", len(df_anim['id'].unique()))
+    print("Number of postures in total: ", df_anim.shape[0])
+    print(df_anim['id'].unique())
 
+if split == 'anim':
     ids = df_anim['id'].unique().tolist()
     train_idx = random.sample(range(0, 72), 58)  # 72 animations in total, 58 for train and the rest for validation
-    id_train = list( ids[i] for i in train_idx )
+    id_train = list(ids[i] for i in train_idx)
     df_train = df_anim.loc[df_anim['id'].isin(id_train), :]
     df_valid = df_anim.loc[~df_anim['id'].isin(id_train), :]
     id_valid = df_valid['id'].unique().tolist()
@@ -53,7 +61,7 @@ else:
     # Shuffle data here. Permutation(x)
     np.random.shuffle(x)
 
-    x_train = x[:int(x.shape[0]*0.8)]
+    x_train = x[:int(x.shape[0]*0.9)]
     x_valid = x[x_train.shape[0]:]
 
 for latent_size in latent_range:
