@@ -9,7 +9,7 @@ from src.utils.visu import set_pub
 import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 import seaborn as sns
-sns.set(style="whitegrid")
+sns.set(style="darkgrid")
 
 """ Visualize the decoded joints trajectories for different radius on a longitudinal interpolation grid style. 
     In avg mode, average across joints
@@ -20,12 +20,12 @@ check_epoch = '-200'
 mode = 'avg'
 lat_dim = ['l1', 'l2', 'l3']
 # Directory with sampled anims
-gen_vae_dir = 'interp_grid_longitude'
+gen_vae_dir = 'interp_grid_longitude/42-200'
 
-# 3 plots, one for ealatent dim
-set_pub()
+
 fig, ax = plt.subplots(3, sharex=True, figsize=(30, 18))
-
+# 3 plots, one for each latent dim
+set_pub()
 for l in range(3):
     path_to_folder = os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, lat_dim[l])
     with open(path_to_folder + '/-overview.json', 'r') as f:
@@ -54,16 +54,25 @@ for l in range(3):
 
         df = pd.concat([df, df_data], axis=0)
 
-    df.reset_index(drop=True, inplace=True)
-    df = df.pivot(columns='radius', values=joints_names)
+    df.reset_index(drop=True, inplace=True)  # without it, pivot finds duplicates
+    idx = list(np.arange(0, 2000, 1)) * 10      # bad solution, but pivot without subindex per radius gives NaNs
+    df = df.pivot(columns='radius', index=idx)
 
     df_mean = df.mean(axis=1, level=1)
     df_mean.columns = df_mean.columns.rename('')
     df_plot = df_mean
-    df_plot.plot(sort_columns=True, colormap='gist_heat', ax=ax[l], yticks=np.arange(-0.4, 0.6, 0.2), xticks=np.arange(0, df_plot.shape[0], 100), legend=False)
 
-ax[2].set(xlabel="frames")
-ax[1].set(ylabel="mean joint angles (radians)")
+    df_plot.plot(sort_columns=True, colormap='gist_heat', ax=ax[l], yticks=np.arange(-0.1, 0.4, 0.2), xticks=np.arange(0, df_plot.shape[0], 200), legend=False)
+
+ax[0].text(1, 0.35, 'LD1',  weight='bold', fontsize=14)
+ax[1].text(1, 0.35, 'LD2',  weight='bold', fontsize=14)
+ax[2].text(1, 0.35, 'LD3',  weight='bold', fontsize=14)
+
+labels = [item.get_text() for item in ax[2].get_xticklabels()]
+empty_string_labels = [str(x) for x in list(np.arange(10))]
+ax[2].set_xticklabels(empty_string_labels)
+ax[2].set(xlabel="longitude line")
+ax[1].set(ylabel="mean joint angle (radians)")
 ax[1].legend(title='radius', loc='center left', bbox_to_anchor=(0.96, 0.5))
 
 plt.tight_layout()

@@ -64,11 +64,11 @@ else:
     df_slerp = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, x_dataset[1]), index_col=0)
     df_spline = pd.read_csv(os.path.join(ROOT_PATH, DATA_SAMP, gen_vae_dir, x_dataset[2]), index_col=0)
 
-    df_lerp['interp'] = 'VAE-lerp'
-    df_slerp['interp'] = 'VAE-slerp'
-    df_spline['interp'] = 'VAE-spline'
+    df_lerp['interp'] = 'VAE Lerp'
+    df_slerp['interp'] = 'VAE Slerp'
+    df_spline['interp'] = 'VAE B-spline'
 
-    x_naoqi['interp'] = 'naoqi-bezier'
+    x_naoqi['interp'] = 'NAOqi Bezier'
 
     df = pd.concat(
         [df_lerp[joints_names + ['interp']], df_slerp[joints_names + ['interp']], df_spline[joints_names + ['interp']],
@@ -79,7 +79,9 @@ else:
     # fig, axes = plt.subplots(nrows=17)
     df_mean = df.mean(axis=1, level=1)
     df_mean.columns = df_mean.columns.rename('')
-    ax = df_mean.plot(title='Decoded joints trajectories')
+    fig = plt.figure()
+    ax = plt.axes()
+    df_mean.plot(ax=ax)
     ax.set(xlabel="frames", ylabel="mean joint angles (radians)")
 
     # To plot each joint separately
