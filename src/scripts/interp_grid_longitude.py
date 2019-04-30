@@ -5,7 +5,7 @@ from src.utils.sampu import interp_multi
 
 """ Sample longitude lines from the spherical grid. """
 
-check_model = '42'
+check_model = '52'
 check_epoch = '-200'
 method = 'slerp'
 nsteps = 10    # per segment
@@ -17,7 +17,7 @@ southp = int(lat/2) + 1  # idx to split lat points to form half circle (longitud
 top_down = True  # Save postures on the longitude from north to south pole if True
 
 # Save path
-df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude')
+df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude/52-200/l1')
 
 for radius in radiuses:
     phi = np.linspace(0, np.pi, circles)     # 10 times the perimeter, parallel to z axis (longitude)

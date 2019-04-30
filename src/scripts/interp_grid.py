@@ -37,7 +37,7 @@ for radius in radiuses:
     # plt.show()
 
     # Flatten 'F' will run around the perimeter in parallel to z axis 10 times
-    pos_list = [list(i) for i in zip(x.flatten('F'),y.flatten('F'),z.flatten('F'))]
+    pos_list = [list(i) for i in zip(x.flatten('F'), y.flatten('F'), z.flatten('F'))]
 
     # Get the radians frames (dec, denorm) and the latent interpolants
     df_dec_interp, df_z_interp = interp_multi(pos_list, True, nsteps, check_model, check_epoch, method)

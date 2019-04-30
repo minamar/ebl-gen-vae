@@ -94,7 +94,7 @@ def interp_multi(pos_list, latent, steps, check_model, check_epoch, method):
     interp_all = []
 
     if method == 'spline':
-        interp = bspline(latent_mean, steps=100)
+        interp = bspline(latent_mean, steps)
     else:
         for i in range(latent_mean.shape[0] -1):
             interp_i = interpolate(latent_mean[i, :], latent_mean[i + 1, :], steps, method)

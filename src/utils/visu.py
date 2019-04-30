@@ -109,7 +109,7 @@ def x2reco(df_x, df_reco):
 def x_all2z(df_z, colorcode='id', leg=True):
     """ All the encoded animations in the latent space (color-coded per animation)"""
     set_pub()
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure()
 
     dim = df_z.shape[1] - 2  # This is -2 for df with both category and id, just id then becomes -1. horrible, i know
     if dim <= 2:
@@ -126,13 +126,13 @@ def x_all2z(df_z, colorcode='id', leg=True):
 
         for colc in ids:
             df = df_z.loc[df_z[colorcode] == colc, :]
-            ax.scatter(df['l1'], df['l2'], df['l3'], label=colc)
+            ax.scatter(df['l1'], df['l2'], df['l3'], label=colc,  s=10)
 
-            ax.set_xlabel('l1')
-            ax.set_ylabel('l2')
-            ax.set_zlabel('l3')
+            ax.set_xlabel('LD1')
+            ax.set_ylabel('LD2')
+            ax.set_zlabel('LD3')
 
-    ax.set_title('Animations encoded in the latent space')
+    # ax.set_title('Animations encoded in the latent space')
     ax.axis('equal')
     ax.axis('square')
     if leg:
@@ -163,6 +163,7 @@ def plot_z_VA():
     labels = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, 'y_va_cat_aug.csv'), index_col=0)
 
     df_all = pd.merge(df_z, labels, left_on="id", right_on="nameAnim", how='left')
+    df_all = df_all[~df_all.id.str.contains('_tr')]
 
     df_z_V = df_all.loc[:, ['l1', 'l2', 'l3', 'valence_mean']]
     fig = plt.figure(figsize=(6, 6))
