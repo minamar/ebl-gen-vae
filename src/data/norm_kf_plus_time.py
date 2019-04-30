@@ -13,8 +13,8 @@ The time dimension is not normalized.
 """
 
 # Original keyframes and destination file to write normalized keyframes
-x_set = 'df12_50fps.csv'
-dest_x_set = 'df13_50fps.csv'
+x_set = 'df31_25fps.csv'
+dest_x_set = 'df32_25fps.csv'
 scaler_file = 'j_scaler_nao_lim_df13_50fps.pkl'  # Change df number with the one of dest_x_set, and whether it is a 'ds' or 'nao'
 
 lims = 'naoqi'  # 'naoqi' to normalize with the full range naoqi limits or 'dataset' to normalize with the dataset range

@@ -10,8 +10,8 @@ The new examples have reversed sign for the joint values of 'HeadYaw', 'HipRoll'
 """
 
 # Original keyframes and destination file to write normalized keyframes
-data_x_set = 'df11_50fps.csv'
-dest_x_set = 'df12_50fps.csv'
+data_x_set = 'df3_25fps.csv'
+dest_x_set = 'df31_25fps.csv'
 
 data_y_set = 'y_va_cat.csv'
 dest_y_set = 'y_va_cat_aug.csv'
@@ -19,7 +19,7 @@ dest_y_set = 'y_va_cat_aug.csv'
 augment_labels = False
 
 # Augment the training examples first
-path = os.path.join(ROOT_PATH, DATA_X_PATH, data_x_set)
+path = os.path.join(ROOT_PATH, RAW_DATA, data_x_set)
 df = pd.read_csv(path, index_col=0)
 
 # Reverse sign for HeadYaw and HipRoll

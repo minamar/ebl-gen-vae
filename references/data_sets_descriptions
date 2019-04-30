@@ -22,7 +22,10 @@ Sampled with 50 fps (0.02 secs sampling rate) from the *robot-animation-library*
 In the end of each animation, the standInit posture is reached and sampled in the same way
 All animation start interpolating from standINit towards the first keyframe.
 
-
+***df3_25fps: Created with <sampling_animations_LEDs.py> (from project EXP3_Generation) - Plymouth Animations
+1. In Choregraphe standInit added 15 frames after the last keyframe.
+2. With <parse_xar_fps> the fps was changed to 15
+3. [17 joints, timestep (in secs), category (anim), id (anim), leds_keys], where leds_keys are the flattened 48 values for 16 eyes LEDs with RGB
 =======================================
 
 --- Sampled 50fps input_set:data/processed/sampling
