@@ -57,7 +57,7 @@ def build_vae_latent_layers(input_tensor, units):
 @graph_def
 @docsig
 def build_vae_graph(
-        input_tensor, latent_size, encoder_size, decoder_size=None,
+        input_tensor, labels_tensor, latent_size, encoder_size, decoder_size=None,
         hidden_activation=tf.nn.relu, output_activation=None,
         use_dropout=False, use_bn=False, bn_is_training=False,
         latent_layer_build_fun=build_vae_latent_layers,
@@ -156,8 +156,9 @@ def build_vae_graph(
             decoder_size = encoder_size
             decoder_size.reverse()
 
+
         decoder_out = build_mlp_graph(
-                input_tensor=latent_layer,
+                input_tensor=tf.concat([latent_layer, labels_tensor], 1), # ANIMA: [CVAE]
                 out_size=decoder_size[-1],
                 n_hidden=decoder_size[:-1],
                 hidden_activation=hidden_activation,
@@ -211,12 +212,16 @@ class VAE(MLP):
             self.x_input = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='x_input')
             self.y_target = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='y_target')
 
+            # ANIMA [CVAE]: y_labels
+            self.y_labels = tf.placeholder(dtype=tf.float32, shape=[None, 2], name='y_labels')
+
             # define learning rate
             self.learning_rate = tf.placeholder(dtype=tf.float32, shape=[], name='learning_rate')
 
             # training flag for batchnorm
             self.bn_is_training = tf.placeholder(dtype=tf.bool, shape=[], name='bn_is_training')
 
+        # ANIMA [CVAE]
         # define the base graph
         with tf.variable_scope('vae_graph'):
             self.y_output, \
@@ -224,7 +229,7 @@ class VAE(MLP):
             self.latent_mean, \
             self.latent_sigma, \
             self.latent_sigma_sq, \
-            self.latent_log_sigma_sq = build_vae_graph(input_tensor=self.x_input, bn_is_training=self.bn_is_training, **self.config)
+            self.latent_log_sigma_sq = build_vae_graph(input_tensor=self.x_input, labels_tensor=self.y_labels, bn_is_training=self.bn_is_training, **self.config)
 
         # define loss
         with tf.variable_scope('losses'):
@@ -257,15 +262,16 @@ class VAE(MLP):
     #ANIMA
     def run_update_and_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss, r_loss, v_loss, _ = self.sess.run([self.loss, self.rec_loss, self.var_loss, self.minimize_op], feed_dict={
+                self.y_labels: batch_inputs[:, -2:],
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.learning_rate: learning_rate,
                 self.beta: beta,
                 self.bn_is_training: True})
         return loss, r_loss, v_loss,
-
     def run_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss = self.sess.run(self.loss, feed_dict={
+                self.y_labels: batch_inputs[:, -2:],
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.beta: beta,

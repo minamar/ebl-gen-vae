@@ -55,6 +55,7 @@ if split == 'anim':
     id_train.sort()
     id_valid.sort()
 
+    # TODO: astype('float64')
     x_train = df_train.drop(columns=['time', 'id', 'category'], inplace=False).values
     x_valid = df_valid.drop(columns=['time', 'id', 'category'], inplace=False).values
 
