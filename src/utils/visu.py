@@ -158,7 +158,7 @@ def plot_3D_curve(curve, show_controlpoints=False):
 
 
 def plot_z_VA():
-    z = '42-200_df14_20fps_mean.csv'
+    z = '54-500_df32_25fps_mean.csv'
     df_z = pd.read_csv(os.path.join(ROOT_PATH, DATA_LATE, z), index_col=0)
     labels = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, 'y_va_cat_aug.csv'), index_col=0)
 

@@ -10,7 +10,7 @@ sns.set(style="darkgrid")
 
 check_model = '52'
 check_epoch = '-200'
-methods = ['spline']  # slerp, lerp, spline
+methods = ['slerp']  # slerp, lerp, spline
 nsteps = 100    # interpolation steps per segment
 fr = 0.06
 n_pos = 5   # Key postures
