@@ -77,7 +77,7 @@ def bspline(z_pos, steps=100):
         print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
-def interp_multi(pos_list, latent, steps, check_model, check_epoch, method):
+def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names):
     """ Given a list of two or more normalized postures, interpolate between them
         The latent interpolant is then decoded, and inverse normalized back to radians
     """
@@ -109,7 +109,7 @@ def interp_multi(pos_list, latent, steps, check_model, check_epoch, method):
 
     # Get decoded denormalized latent interpolant
     dec_interp = decode(interp, model)
-    df_dec_interp = pd.DataFrame(columns=joints_names, data=dec_interp)
+    df_dec_interp = pd.DataFrame(columns=feats_names, data=dec_interp)
     scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
     df_dec_interp_norm = inverse_norm(df_dec_interp, scaler)
 
@@ -131,33 +131,6 @@ def sel_anim_id(df):
     anim_id = input('\n'.join(id_list))
 
     return anim_id, cat
-
-    # import os
-    # import sys
-    # import re
-    # sys.path.append(os.path.realpath('.'))
-    # from pprint import pprint
-    #
-    # import inquirer
-    #
-    # df = df[~df.id.str.contains('_tr')]
-    # cat_list = df['category'].unique().tolist()
-    # questions1 = [
-    #     inquirer.List('size',
-    #                   message="Select category: ",
-    #                   choices=cat_list,
-    #                   ),
-    # ]
-    # cat = inquirer.prompt(questions1)
-    #
-    # df_cat = df[df['category'] == cat]
-    # id_list = df_cat['id'].unique().tolist()
-    # id_list.sort()
-    # print("Select id:")
-    # anim_id = input('\n'.join(id_list))
-    #
-    # return anim_id, cat
-
 
 def sel_rand_posture(df, n, label):
     """ Given a dataframe of animations it returns n entries of it, just joints values.
@@ -336,6 +309,15 @@ def merge_with_labels(df, lab_file='y_va_cat_aug.csv'):
     df_y = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, lab_file), index_col=0)
     df_merged = pd.merge(df, df_y, left_on=['id'], right_on=['nameAnim'], how='left')
     df_merged.drop(columns=['nameAnim', 'valence_mean', 'arousal_mean'], inplace=True)
+    return df_merged
+
+
+def merge_with_VA_labels(df, lab_file='y_va_cat_aug.csv'):
+    """Merge animations dataset with valence/arousal labels"""
+    df_y = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, lab_file), index_col=0)
+    df_merged = pd.merge(df, df_y, left_on=['id'], right_on=['nameAnim'], how='left')
+    df_merged.drop(columns=['nameAnim', 'category_y'], inplace=True)
+    df_merged.rename(columns={'category_x': 'category'}, inplace=True)
     return df_merged
 
 

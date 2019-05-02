@@ -5,8 +5,9 @@ from src.utils.sampu import interp_multi
 
 """ Sample longitude lines from the spherical grid. """
 
-check_model = '52'
-check_epoch = '-200'
+check_model = '53'
+check_epoch = '-500'
+feats_names = joints_names + leds_keys
 method = 'slerp'
 nsteps = 10    # per segment
 fr = 0.06
@@ -16,8 +17,9 @@ lat = 41    # Points on a circe (first and last are the same)
 southp = int(lat/2) + 1  # idx to split lat points to form half circle (longitude)
 top_down = True  # Save postures on the longitude from north to south pole if True
 
+# TODO: add param for the model id
 # Save path
-df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude/52-200/l1')
+df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude/53-500/l3')
 
 for radius in radiuses:
     phi = np.linspace(0, np.pi, circles)     # 10 times the perimeter, parallel to z axis (longitude)
@@ -39,7 +41,7 @@ for radius in radiuses:
                 long = c + circles - 1
 
             # Get the radians frames (dec, denorm) and the latent interpolants
-            df_dec_interp, df_z_interp = interp_multi(pos_list, True, nsteps, check_model, check_epoch, method)
+            df_dec_interp, df_z_interp = interp_multi(pos_list, True, nsteps, check_model, check_epoch, method, feats_names)
 
             # Add 'time' column based on frequency fr
             end = df_dec_interp.shape[0] * fr + 0.02
