@@ -217,11 +217,21 @@ def decode(latent_mean, model):
     return x_reconstruction[0]
 
 
-def get_latent_z(check_model, check_epoch, dataset):
+def decode_cond(latent_mean, cond, model):
+    """ Decodes latent z codes and returns reconstruction """
+    x_reconstruction = model.sess.run([model.y_output],
+                                      feed_dict={model.latent_layer: latent_mean, model.y_labels: cond, model.bn_is_training: False})
+    return x_reconstruction[0]
+
+
+def get_latent_z(check_model, check_epoch, dataset, cond=False):
     """ Load a model and a dataset of animations and save df with their latent means and sigmas"""
     model = load_model(check_model, check_epoch)
     # Load animation dataset
     df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
+
+    if cond:
+        df_anim = merge_with_VA_labels(df_anim)
 
     # Get latent z vectors
     x = df_anim.drop(columns=['time', 'id', 'category'], inplace=False)
@@ -359,7 +369,7 @@ def normalize(list_pos):
 
 
 if __name__ == '__main__':
-    dataset = 'df24_20fps.csv'
+    dataset = 'df32_25fps.csv'
 # #     differ_duplicate(dataset)
 #     for r in ['3', '4', '5']:
-    get_latent_z('47', '-500', dataset)
+    get_latent_z('54', '-500', dataset, cond=True)
