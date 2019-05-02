@@ -10,12 +10,12 @@ import matplotlib.pyplot as plt
 set_pub()
 check_model = '42'
 check_epoch_list = ['-200']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
-scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
+scaler = 'j_scaler_nao_lim_df32_25fps.pkl'
 x_dataset = 'df14_20fps.csv'
 ccode = 'id'  # How to colorcode the animations in latent space
 save_stuff = False
 all_epochs = True
-grid_show = True
+grid_show = False
 dataset_dir = x_dataset.split('.')[0]
 
 # Load animation dataset
@@ -54,34 +54,34 @@ for check_epoch in check_epoch_list:
     fig = x_all2z(df_z_mean, ccode, leg=False)
 
 
-    # # GRAPH: Bar plot mean of latent dimensions standard deviations across postures
+    # GRAPH: Bar plot mean of latent dimensions standard deviations across postures
 
-    # fig2 = plt.figure(figsize=(12, 5))
-    #
-    # ax1 = fig2.add_subplot(2, 2, 1)
-    # ax1.bar(range(latent_sigma_mean.size), latent_sigma_mean[dim_inds])
-    # ax1.set_title('mean(latent sigmas)')
-    #
-    # ax1.set_ylabel('sigma')
-    #
-    # # Bar plot mean standard deviation of latent dimensions
-    # ax1 = fig2.add_subplot(2, 2, 2)
-    # ax1.bar(range(np.std(latent_mean, axis=0).size), np.std(latent_mean[:, dim_inds], axis=0))
-    # ax1.set_title('std(latent means)')
-    #
-    # ax1.set_ylabel('mean')
-    #
-    # # Boxplot standard deviation of latent dimensions
-    # ax1 = fig2.add_subplot(2, 2, 3)
-    # ax1.boxplot(latent_sigma[:, dim_inds])
-    # ax1.set_title('latent sigmas')
-    # ax1.set_xlabel('latent dimension')
-    #
-    # # Boxplot means of latent dimensions
-    # ax1 = fig2.add_subplot(2, 2, 4)
-    # ax1.boxplot(latent_mean[:, dim_inds])
-    # ax1.set_title('latent means')
-    # ax1.set_xlabel('latent dimension')
+    fig2 = plt.figure(figsize=(12, 5))
+
+    ax1 = fig2.add_subplot(2, 2, 1)
+    ax1.bar(range(latent_sigma_mean.size), latent_sigma_mean[dim_inds])
+    ax1.set_title('mean(latent sigmas)')
+
+    ax1.set_ylabel('sigma')
+
+    # Bar plot mean standard deviation of latent dimensions
+    ax1 = fig2.add_subplot(2, 2, 2)
+    ax1.bar(range(np.std(latent_mean, axis=0).size), np.std(latent_mean[:, dim_inds], axis=0))
+    ax1.set_title('std(latent means)')
+
+    ax1.set_ylabel('mean')
+
+    # Boxplot standard deviation of latent dimensions
+    ax1 = fig2.add_subplot(2, 2, 3)
+    ax1.boxplot(latent_sigma[:, dim_inds])
+    ax1.set_title('latent sigmas')
+    ax1.set_xlabel('latent dimension')
+
+    # Boxplot means of latent dimensions
+    ax1 = fig2.add_subplot(2, 2, 4)
+    ax1.boxplot(latent_mean[:, dim_inds])
+    ax1.set_title('latent means')
+    ax1.set_xlabel('latent dimension')
 
     if grid_show:
         method = 'slerp'
