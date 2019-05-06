@@ -23,6 +23,7 @@ In the end of each animation, the standInit posture is reached and sampled in th
 All animation start interpolating from standINit towards the first keyframe.
 
 ***df3_25fps: Created with <sampling_animations_LEDs.py> (from project EXP3_Generation) - Plymouth Animations
+Shape: (5074, 68)
 1. In Choregraphe standInit added 15 frames after the last keyframe.
 2. With <parse_xar_fps> the fps was changed to 15
 3. [17 joints, timestep (in secs), category (anim), id (anim), leds_keys], where leds_keys are the flattened 48 values for 16 eyes LEDs with RGB
@@ -73,6 +74,16 @@ Transformation of df22_50fps. Size ((232360,19))
 *** df24_20fps: Created with <downsample.py>
 Transformation of df23_50fps. (232360,19) ---> (78515,19)
 Dawnsampled to 20fps (1/3 of the frames are kept)
+
+*** df31_25fps: Created with <augment_mirroring.py>
+Transformed from df3_25fps
+Shape: (10148, 68)
+
+*** df32_25fps: Created with <norm_samp_leds.py>
+Transformed from df31_25fps
+Shape: (10148, 68)
+
+
 =======================================
 
 --- Keyframes input_set: data/processed/keyframes/anim_KF
