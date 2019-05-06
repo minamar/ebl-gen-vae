@@ -8,15 +8,14 @@ sns.set(style="darkgrid")
 
 """ Sample a 3d unit gaussian, directly interpolate them in the latent space, decode """
 
-check_model = '52'
+check_model = '42'
 check_epoch = '-200'
 methods = ['slerp']  # slerp, lerp, spline
 nsteps = 100    # interpolation steps per segment
 fr = 0.06
 n_pos = 5   # Key postures
-std = 5  # Sampling radius
-
-
+std = 3  # Sampling radius
+feats_names = joints_names
 # Save path
 df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_unit_gaussian')
 
@@ -31,7 +30,7 @@ pos_list = [[0, 0, 0]] + pos_list + [[0, 0, 0]]
 
 for method in methods:
     # Get the radians frames (dec, denorm) and the latent interpolants
-    df_dec_interp, df_z_interp = interp_multi(pos_list, True, nsteps, check_model, check_epoch, method)
+    df_dec_interp, df_z_interp = interp_multi(pos_list, True, nsteps, check_model, check_epoch, method, feats_names, None)
 
     # Add 'time' column based on frequency fr
     end = df_dec_interp.shape[0] * fr + 0.02
