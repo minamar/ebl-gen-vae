@@ -77,12 +77,13 @@ def bspline(z_pos, steps=100):
         print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
-def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names):
+def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names, cond_VA=None):
     """ Given a list of two or more normalized postures, interpolate between them
         The latent interpolant is then decoded, and inverse normalized back to radians
     """
     # Restore model to get the decoder
     model = load_model(check_model, check_epoch)
+    scaler = 'j_scaler_nao_lim_df32_25fps.pkl'
 
     # latent=True for interp the latent space directly without encoding keyframes before
     if latent:
@@ -104,14 +105,21 @@ def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feat
 
     # Get the def of the z interpolant
     df_z_interp = pd.DataFrame(interp)
-    df_z_interp.columns = ['l1', 'l2', 'l3']
-    df_z_interp['interp_method'] = method
+    cols_list = []
+    for c in range(len(pos_list[0])):
+        cols_list.append('l' + str(c+1))
+        # df_z_interp.columns = ['l1', 'l2', 'l3', 'l4']
 
-    # Get decoded denormalized latent interpolant
-    dec_interp = decode(interp, model)
-    df_dec_interp = pd.DataFrame(columns=feats_names, data=dec_interp)
-    scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
-    df_dec_interp_norm = inverse_norm(df_dec_interp, scaler)
+    if cond_VA is None:
+        # Get decoded denormalized latent interpolant
+        dec_interp = decode(interp, model)
+        df_dec_interp = pd.DataFrame(columns=feats_names, data=dec_interp)
+        df_dec_interp_norm = inverse_norm(df_dec_interp, scaler)
+    else:
+        dec_interp = decode_cond(interp, np.tile(cond_VA, (interp.shape[0], 1)), model)
+        df_dec_interp = pd.DataFrame(columns=feats_names + ['valence', 'arousal'], data=dec_interp)
+        df_dec_interp_norm = df_dec_interp
+        df_dec_interp_norm[joints_names] = inverse_norm(df_dec_interp.loc[:, joints_names], scaler)
 
     return df_dec_interp_norm, df_z_interp
 
@@ -194,6 +202,7 @@ def load_model(check_model, check_epoch):
     model_restored = VAE(conf_restored)
     model_path = os.path.join(check_path, check_epoch)
     model_restored.restore(model_path)
+    k = None
     return model_restored
 
 
