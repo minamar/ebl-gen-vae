@@ -24,9 +24,9 @@ df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude/53-500/l3')
 for radius in radiuses:
     phi = np.linspace(0, np.pi, circles)     # 10 times the perimeter, parallel to z axis (longitude)
     theta = np.linspace(0, 2 * np.pi, lat)    # (latidude) in parallel to x,y plane
-    y = radius * np.outer(np.sin(theta), np.cos(phi))   # the plane
-    z = radius * np.outer(np.sin(theta), np.sin(phi))   # the plane
-    x = radius * np.outer(np.cos(theta), np.ones_like(phi))  # the axis
+    x = radius * np.outer(np.sin(theta), np.cos(phi))   # the plane
+    y = radius * np.outer(np.sin(theta), np.sin(phi))   # the plane
+    z = radius * np.outer(np.cos(theta), np.ones_like(phi))  # the axis
 
     for hem in range(2):
 

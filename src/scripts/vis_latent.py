@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
     a plot of all the encoded animations in the latent space, color coded per anim and per category  
 """
 set_pub()
-check_model = '56'
-check_epoch_list = ['-200']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
+check_model = '61'
+check_epoch_list = ['-100']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
 scaler = 'j_scaler_nao_lim_df32_25fps.pkl'
 x_dataset = 'df32_25fps.csv'
 ccode = 'id'  # How to colorcode the animations in latent space

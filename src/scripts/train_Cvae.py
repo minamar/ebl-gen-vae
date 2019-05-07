@@ -11,16 +11,16 @@ import numpy
 sns.set(style="darkgrid")
 
 dataset = 'df32_25fps.csv'
-split = 'anim'
+split = None #'anim'
 subset = None  # from settings pos_neu_ids
 # 'Emotions/Positive'
 
 lr = 0.0001
-latent_range = [5]
-batch = 32
-encoder = [128, 512, 128]
+latent_range = [3]
+batch = 64
+encoder = [128, 512, 512, 128]
 decoder = [128, 512, 128]
-n_epoch = 201
+n_epoch = 101
 wu = False  # Warm-up
 beta = 0.001
 beta_range = np.linspace(0.0001, 0.01, n_epoch)
@@ -33,8 +33,8 @@ df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_
 # Load anims df: motion + leds
 df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
 # Merge with valence and arousal scores
-df_anim = merge_with_VA_labels(df_anim)
-# Labels
+df_anim = merge_with_VA_labels(df_anim, 'y_va_cat_ind_ratings_aug.csv')
+df_anim.drop(column='arousal', inplace=True)
 
 # If not None you get to train just pos valence VAE
 if subset is not None:
@@ -68,7 +68,7 @@ else:
     # Shuffle data here. Permutation(x)
     np.random.shuffle(x)
 
-    x_train = x[:int(x.shape[0]*0.8)]
+    x_train = x[:int(x.shape[0]*0.95)]
     x_valid = x[x_train.shape[0]:]
 
 
@@ -77,7 +77,7 @@ for latent_size in latent_range:
     start = time.time()
     # create the model
     conf = VAEConfig(
-            in_size=67,
+            in_size=66,
             latent_size=latent_size,
             encoder_size=encoder,
             decoder_size=decoder,
