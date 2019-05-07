@@ -142,17 +142,30 @@ Transformation of df13_KF.
 
 labels_set: data/processed/labels
 
-y_va: #Anim x [nameAnim,valence_mean,arousal_mean]
+*** y_va:
+Shape: (36, 3)
+#Anim x [nameAnim,valence_mean,arousal_mean]
 
-y_va_cat:
+*** y_va_cat:
+Shape: (36, 4)
 Created with <va_scores_2category.py>
 #Anim x [,nameAnim,valence_mean,arousal_mean,Category]
 
-y_va_cat_aug
+*** y_va_cat_aug:
+Shape: (72, 4)
 Created with <augmentation.py>
 #Anim x [,nameAnim,valence_mean,arousal_mean,Category]
 Double the entries of the initial labels to include the ones with _tr which are the mirrored animations
 
+*** y_va_cat_ind_ratings.csv
+Shape: (780, 4)
+# Participants x Anim x [,nameAnim,valence_mean,arousal_mean,Category]
+Individual scores
+
+*** y_va_cat_ind_ratings_aug.csv
+Shape: (1560, 4)
+# 2 x Participants x Anim x [,nameAnim,valence_mean,arousal_mean,Category]
+Individual scores plus _tr augmentation
 
 ==============================================
 
