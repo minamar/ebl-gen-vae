@@ -221,3 +221,15 @@ leds_short = ['RightFaceLed1',
               'LeftFaceLed7',
               'LeftFaceLed8'
               ]
+
+va2cat = {
+    '[0, 0]': 'NegTir',
+    '[0, 0.5]': 'NegCal',
+    '[0, 1]': 'NegExc',
+    '[0.5, 0]': 'NeuTir',
+    '[0.5, 0.5]': 'NeuCal',
+    '[0.5, 1]': 'NeuExc',
+    '[1, 0]': 'PosTir',
+    '[1, 0.5]': 'PosCal',
+    '[1, 1]': 'PosExc',
+}

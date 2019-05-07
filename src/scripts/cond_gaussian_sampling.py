@@ -8,14 +8,14 @@ sns.set(style="darkgrid")
 
 """ Sample a 3d unit gaussian, directly interpolate them in the latent space, decode """
 
-check_model = '57'
-check_epoch = '-200'
-latent_dim = 5
+check_model = '61'
+check_epoch = '-100'
+latent_dim = 2
 method = 'slerp'  # slerp, lerp, spline
 nsteps = 30    # interpolation steps per segment
 fr = 0.06
 n_pos = 5   # Key postures
-std = 0.5  # Sampling radius
+std = 1  # Sampling radius
 feats_names = joints_names + leds_keys
 va_list = [[0, 0], [0.5, 0.5], [1, 1], [0, 0.5], [0, 1], [0.5, 0], [1, 0], [1, 0.5], [0.5, 1]]
 
@@ -50,18 +50,20 @@ for va in va_list:
 
     files_dict[file_id] = {
         'file_id': file_id,
-        'VA_cond': va,
         'interp_method': method,
         'interp_steps': nsteps,
         'frequency': fr,
         'model': check_model + check_epoch,
-        'sampling radius': std
+        'sampling radius': std,
+        'n_postures': n_pos,
+        'VA_score': va,
+        'VA_cat': va2cat[str(va)]
     }
 
     with open(json_file, 'w') as fd:
         fd.write(json.dumps(files_dict))
 
     # Save
-    df_dec_interp.to_csv(os.path.join(df_path, str(file_id) + '_dec_' + 'r' + str(std) + '.csv'))
-    df_z_interp.to_csv(os.path.join(df_path, str(file_id) + '_z_' + 'r' + str(std) + '.csv'))
+    df_dec_interp.to_csv(os.path.join(df_path, str(file_id) + '_dec_' + 'r' + str(std) + '_' +  va2cat[str(va)] + '.csv'))
+    df_z_interp.to_csv(os.path.join(df_path, str(file_id) + '_z_' + 'r' + str(std) + '_' +  va2cat[str(va)] + '.csv'))
 
