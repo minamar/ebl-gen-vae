@@ -22,8 +22,17 @@ lat_dim = ['l1', 'l2', 'l3']
 # Directory with sampled anims
 gen_vae_dir = 'interp_grid_longitude/42-200'
 
+# Image size
+width, height = 640, 480
 
-fig, ax = plt.subplots(3, sharex=True, figsize=(30, 18))
+# Pixel border around image
+border = 1
+
+dpi = 72.0
+figsize= (width+2*border)/float(dpi), (height+2*border)/float(dpi)
+
+fig, ax = plt.subplots(3, sharex=True, figsize=figsize, dpi=dpi)
+plt.subplots_adjust(hspace=0.05)
 # 3 plots, one for each latent dim
 set_pub()
 for l in range(3):
@@ -64,19 +73,20 @@ for l in range(3):
 
     df_plot.plot(sort_columns=True, colormap='gist_heat', ax=ax[l], yticks=np.arange(-0.1, 0.4, 0.2), xticks=np.arange(0, df_plot.shape[0], 200), legend=False)
 
-ax[0].text(1, 0.35, 'LD1',  weight='bold', fontsize=14)
-ax[1].text(1, 0.35, 'LD2',  weight='bold', fontsize=14)
-ax[2].text(1, 0.35, 'LD3',  weight='bold', fontsize=14)
+ax[0].text(1, 0.35, 'LD1',  weight='bold', fontsize=16)
+ax[1].text(1, 0.35, 'LD2',  weight='bold', fontsize=16)
+ax[2].text(1, 0.35, 'LD3',  weight='bold', fontsize=16)
 
 labels = [item.get_text() for item in ax[2].get_xticklabels()]
 empty_string_labels = [str(x) for x in list(np.arange(10))]
 ax[2].set_xticklabels(empty_string_labels)
-ax[2].set(xlabel="longitude line")
-ax[1].set(ylabel="mean joint angle (radians)")
+ax[2].set_xlabel("longitude line", fontsize=16)
+ax[1].set_ylabel("mean joint angle (radians)", fontsize=16)
 ax[1].legend(title='radius', loc='center left', bbox_to_anchor=(0.96, 0.5))
 
 plt.tight_layout()
-
+plt.subplot.hspace = 0.05
+fig.savefig('/home/mina/Dropbox/APRIL-MINA/PUBS/ACII2019/IEEE2019-EBL-GEN-VAE-v2/jpgs/fig6.png', bbox='tight', dpi=100)
 plt.show()
 
 # Frequency analysis
