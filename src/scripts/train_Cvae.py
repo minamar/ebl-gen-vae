@@ -2,7 +2,7 @@ import pandas as pd
 import tensorflow as tf
 from tfmodellib.vae import VAE, VAEConfig, variational_loss, build_vae_latent_layers
 from settings import *
-from src.utils.sampu import merge_with_VA_labels
+from src.utils.sampu import merge_with_VA_labels, v2cat
 import os
 import random
 import time
@@ -20,12 +20,14 @@ latent_range = [3]
 batch = 64
 encoder = [128, 512, 512, 128]
 decoder = [128, 512, 128]
-n_epoch = 101
+n_epoch = 401
 wu = False  # Warm-up
 beta = 0.001
 beta_range = np.linspace(0.0001, 0.01, n_epoch)
 kern_init = 'xavier_uniform'
 save_overview = True
+v_only = True
+v2cat_flag = True
 
 
 df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_col=0, skipinitialspace=True)
@@ -33,8 +35,12 @@ df_over = pd.read_csv(os.path.join(ROOT_PATH, 'reports', 'overview.csv'), index_
 # Load anims df: motion + leds
 df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
 # Merge with valence and arousal scores
-df_anim = merge_with_VA_labels(df_anim, 'y_va_cat_ind_ratings_aug.csv')
-df_anim.drop(column='arousal', inplace=True)
+df_anim = merge_with_VA_labels(df_anim, 'y_va_cat_aug.csv')
+
+if v_only:
+    df_anim.drop(columns='arousal', inplace=True)
+    if v2cat_flag:
+        df_anim = v2cat(df_anim)
 
 # If not None you get to train just pos valence VAE
 if subset is not None:
@@ -55,7 +61,6 @@ if split == 'anim':
     id_train.sort()
     id_valid.sort()
 
-    # TODO: astype('float64')
     x_train = df_train.drop(columns=['time', 'id', 'category'], inplace=False).values
     x_valid = df_valid.drop(columns=['time', 'id', 'category'], inplace=False).values
 
