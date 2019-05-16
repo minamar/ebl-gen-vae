@@ -77,7 +77,7 @@ def bspline(z_pos, steps=100):
         print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
-def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names, cond_VA=None):
+def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names, cond_AV=None):
     """ Given a list of two or more normalized postures, interpolate between them
         The latent interpolant is then decoded, and inverse normalized back to radians
     """
@@ -108,16 +108,20 @@ def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feat
     cols_list = []
     for c in range(len(pos_list[0])):
         cols_list.append('l' + str(c+1))
-        # df_z_interp.columns = ['l1', 'l2', 'l3', 'l4']
+    df_z_interp.columns = cols_list
 
-    if cond_VA is None:
+    if cond_AV is None:
         # Get decoded denormalized latent interpolant
         dec_interp = decode(interp, model)
         df_dec_interp = pd.DataFrame(columns=feats_names, data=dec_interp)
         df_dec_interp_norm = inverse_norm(df_dec_interp, scaler)
     else:
-        dec_interp = decode_cond(interp, np.tile(cond_VA, (interp.shape[0], 1)), model)
-        df_dec_interp = pd.DataFrame(columns=feats_names + ['valence', 'arousal'], data=dec_interp)
+        dec_interp = decode_cond(interp, np.tile(cond_AV, (interp.shape[0], 1)), model)
+        if len(cond_AV) == 1:
+            df_dec_interp = pd.DataFrame(columns=feats_names + ['valence'], data=dec_interp)
+        else:
+            df_dec_interp = pd.DataFrame(columns=feats_names + ['arousal', 'valence'], data=dec_interp)
+
         df_dec_interp_norm = df_dec_interp
         df_dec_interp_norm[joints_names] = inverse_norm(df_dec_interp.loc[:, joints_names], scaler)
 
@@ -139,6 +143,7 @@ def sel_anim_id(df):
     anim_id = input('\n'.join(id_list))
 
     return anim_id, cat
+
 
 def sel_rand_posture(df, n, label):
     """ Given a dataframe of animations it returns n entries of it, just joints values.
@@ -327,7 +332,7 @@ def merge_with_labels(df, lab_file='y_va_cat_aug.csv'):
     """Merge animations dataset with categorical labels"""
     df_y = pd.read_csv(os.path.join(ROOT_PATH, DATA_Y_PATH, lab_file), index_col=0)
     df_merged = pd.merge(df, df_y, left_on=['id'], right_on=['nameAnim'], how='left')
-    df_merged.drop(columns=['nameAnim', 'valence_mean', 'arousal_mean'], inplace=True)
+    df_merged.drop(columns=['nameAnim', 'valence', 'arousal'], inplace=True)
     return df_merged
 
 
@@ -354,6 +359,31 @@ def add_category(df):
     df.loc[idx_emo, 'id'] = id_df.loc[idx_emo, 4]
 
     return df
+
+
+def v2cat_df(df):
+    """
+    Takes the y labels, which contains valence continuous values per animation, and
+    and assigns them with 0, 0.5, 1 which is neg, neu, pos respectively
+    """
+
+    # Add category based on the v/a score
+    df.loc[(df['valence'] > 0.66), 'category'] = 1
+    df.loc[(df['valence'] > 0.33) & (df['valence'] <= 0.66), 'category'] = 0.5
+    df.loc[(df['valence'] <= 0.33), 'category'] = 0
+
+    df['valence'] = df['category']
+    return df
+
+
+def v2cat_value(v):
+    if v > 0.66:
+        cat = 'Pos'
+    elif v <= 0.33:
+        cat = 'Neg'
+    else:
+        cat = 'Neu'
+    return cat
 
 
 def downsample_anim(df, fps):

@@ -213,8 +213,8 @@ class VAE(MLP):
             self.x_input = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='x_input')
             self.y_target = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='y_target')
 
-            # # ANIMA [CVAE]: y_labels
-            self.y_labels = tf.placeholder(dtype=tf.float32, shape=[None, 2], name='y_labels')
+            # # ANIMA [CVAE]: y_labels. 1 for valence only, 2 for VA
+            self.y_labels = tf.placeholder(dtype=tf.float32, shape=[None, 1], name='y_labels')
 
             # define learning rate
             self.learning_rate = tf.placeholder(dtype=tf.float32, shape=[], name='learning_rate')
@@ -263,7 +263,7 @@ class VAE(MLP):
     #ANIMA [CVAE]
     def run_update_and_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss, r_loss, v_loss, _ = self.sess.run([self.loss, self.rec_loss, self.var_loss, self.minimize_op], feed_dict={
-                self.y_labels: batch_inputs[:, -2:],
+                self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.learning_rate: learning_rate,
@@ -272,7 +272,7 @@ class VAE(MLP):
         return loss, r_loss, v_loss,
     def run_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss = self.sess.run(self.loss, feed_dict={
-                self.y_labels: batch_inputs[:, -2:],
+                self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]: -1 for valence only, -2 for VA
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.beta: beta,
