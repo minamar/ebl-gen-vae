@@ -149,7 +149,8 @@ Shape: (36, 3)
 *** y_va_cat:
 Shape: (36, 4)
 Created with <va_scores_2category.py>
-#Anim x [,nameAnim,valence_mean,arousal_mean,Category]
+#Anim x [,nameAnim,valence_mean,arousal_mean,category]
+Category is decided based on thresholds applied to the user evaluation.
 
 *** y_va_cat_aug:
 Shape: (72, 4)

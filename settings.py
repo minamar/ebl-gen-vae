@@ -222,14 +222,19 @@ leds_short = ['RightFaceLed1',
               'LeftFaceLed8'
               ]
 
-va2cat = {
-    '[0, 0]': 'NegTir',
-    '[0, 0.5]': 'NegCal',
-    '[0, 1]': 'NegExc',
-    '[0.5, 0]': 'NeuTir',
-    '[0.5, 0.5]': 'NeuCal',
-    '[0.5, 1]': 'NeuExc',
-    '[1, 0]': 'PosTir',
-    '[1, 0.5]': 'PosCal',
-    '[1, 1]': 'PosExc',
+av2cat = {
+    '[0, 0]': 'TirNeg',
+    '[0, 0.5]': 'TirNeu',
+    '[0, 1]': 'TirPos',
+    '[0.5, 0]': 'CalNeg',
+    '[0.5, 0.5]': 'CalNeu',
+    '[0.5, 1]': 'CalPos',
+    '[1, 0]': 'ExcNeg',
+    '[1, 0.5]': 'ExcNeu',
+    '[1, 1]': 'ExcPos',
+    '[0]': 'Neg',
+    '[0.25]': 'NegNeu',
+    '[0.5]': 'Neu',
+    '[0.75]': 'PosNeu',
+    '[1]': 'Pos',
 }
