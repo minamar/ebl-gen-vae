@@ -26,7 +26,7 @@ df_raw = pd.read_csv(path_raw, index_col=0)
 # First keyframe, last keyframe, #keyframes (all stored in data/external/plymouth_animations_descrptive.ods)
 print(df_raw.groupby('id', )['keyframe'].agg(['first', 'last', 'count']))
 
-# Convert degrees to radians for ever joint for all joints EXCEPT LHand, RHand (since their values are not in degrees)
+# Convert degrees to radians for every joint EXCEPT LHand, RHand (since their values are not in degrees)
 j_cols_deg = [0,1,2,3,4,5,6,8,9,10,11,12,14,15,16]
 df_raw.iloc[:, j_cols_deg] = df_raw.iloc[:, j_cols_deg].apply(lambda x: np.radians(x))
 
