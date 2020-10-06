@@ -83,6 +83,6 @@ globvar.py
 /references/
 
 /src/data/comp_datasets.py
-
+/src/data/downsample.py
 # Mac OS-specific storage files
 .DS_Store
