@@ -3,6 +3,8 @@ import json
 from settings import *
 from src.utils.sampu import interp_multi, v2cat_value
 import math
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 """ Sample longitude lines from the spherical grid. Only for 3D latent space """
 
@@ -12,15 +14,15 @@ feats_names = joints_names + leds_keys
 method = 'spline'
 nsteps = 20    # per segment
 fr = 0.06
-radiuses = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]  # Sampling radius
+radiuses = [2, 3, 4, 5]#[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]  # Sampling radius
 # av_list = [[0, 0], [0.5, 0.5], [1, 1], [0, 0.5], [0, 1], [0.5, 0], [1, 0], [1, 0.5], [0.5, 1]]
-av_list = [[0.], 1], [0.5], [0.6], [0.9], [1.]]
+av_list = [[0.], [0.5], [1.]]
 
 lat = 20    # Points on a circe (first and last are the same)
 long = 9
 
 # Save path
-df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'cond_torus_longitude/' + check_model + check_epoch + '/l3')
+df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'cond_torus_longitude/' + check_model + check_epoch + '_origin/l1')
 
 for radius in radiuses:
     nsteps = math.ceil(5 * radius)
@@ -29,13 +31,18 @@ for radius in radiuses:
     theta_t = np.linspace(0, 2 * np.pi, lat)
     phi_t = np.linspace(0, 2 * np.pi, long)
     theta_t, phi_t = np.meshgrid(theta_t, phi_t)
-    x = (R + r * np.cos(theta_t)) * np.cos(phi_t)
-    y = (R + r * np.cos(theta_t)) * np.sin(phi_t)
-    z = r * np.sin(theta_t)
+    y = (R + r * np.cos(theta_t)) * np.cos(phi_t)
+    z = (R + r * np.cos(theta_t)) * np.sin(phi_t)
+    x = r * np.sin(theta_t)
 
+    fig4 = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.plot(x.flatten('F'), y.flatten('F'), z.flatten('F'))
+    plt.show()
     for c in range(long - 1):
 
-        pos_list = [list(i) for i in zip(x[c, :], y[c, :], z[c, :])]
+        pos_list = [list(i) for i in zip(x[c, 10:], y[c, 10:], z[c, 10:])]
+        pos_list = pos_list + [list(i) for i in zip(x[c, :10], y[c, :10], z[c, :10])]
         longitude = c
 
         for av in av_list:

@@ -57,7 +57,7 @@ def build_vae_latent_layers(input_tensor, units):
 @graph_def
 @docsig
 def build_vae_graph(
-        input_tensor, labels_tensor, latent_size, encoder_size, decoder_size=None,
+        input_tensor, latent_size, encoder_size, decoder_size=None, #labels_tensor,
         hidden_activation=tf.nn.relu, output_activation=None,
         use_dropout=False, use_bn=False, bn_is_training=False,
         latent_layer_build_fun=build_vae_latent_layers,
@@ -158,8 +158,8 @@ def build_vae_graph(
 
 
         decoder_out = build_mlp_graph(
-                input_tensor=tf.concat([latent_layer, labels_tensor], 1), # ANIMA: [CVAE]
-                # input_tensor=latent_layer,
+                # input_tensor=tf.concat([latent_layer, labels_tensor], 1), # ANIMA [CVAE]
+                input_tensor=latent_layer,
                 out_size=decoder_size[-1],
                 n_hidden=decoder_size[:-1],
                 hidden_activation=hidden_activation,
@@ -213,8 +213,8 @@ class VAE(MLP):
             self.x_input = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='x_input')
             self.y_target = tf.placeholder(dtype=tf.float32, shape=[None, self.config['in_size']], name='y_target')
 
-            # # ANIMA [CVAE]: y_labels. 1 for valence only, 2 for VA
-            self.y_labels = tf.placeholder(dtype=tf.float32, shape=[None, 1], name='y_labels')
+            # # # ANIMA [CVAE]: y_labels. 1 for valence only, 2 for VA
+            # self.y_labels = tf.placeholder(dtype=tf.float32, shape=[None, 1], name='y_labels')
 
             # define learning rate
             self.learning_rate = tf.placeholder(dtype=tf.float32, shape=[], name='learning_rate')
@@ -230,8 +230,9 @@ class VAE(MLP):
             self.latent_mean, \
             self.latent_sigma, \
             self.latent_sigma_sq, \
-            self.latent_log_sigma_sq = build_vae_graph(input_tensor=self.x_input, labels_tensor=self.y_labels, bn_is_training=self.bn_is_training, **self.config)
+            self.latent_log_sigma_sq = build_vae_graph(input_tensor=self.x_input, bn_is_training=self.bn_is_training, **self.config)
         # labels_tensor=self.y_labels,
+
         # define loss
         with tf.variable_scope('losses'):
 
@@ -263,7 +264,7 @@ class VAE(MLP):
     #ANIMA [CVAE]
     def run_update_and_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss, r_loss, v_loss, _ = self.sess.run([self.loss, self.rec_loss, self.var_loss, self.minimize_op], feed_dict={
-                self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]
+                # self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.learning_rate: learning_rate,
@@ -272,7 +273,7 @@ class VAE(MLP):
         return loss, r_loss, v_loss,
     def run_loss(self, batch_inputs, batch_targets, learning_rate, beta):
         loss = self.sess.run(self.loss, feed_dict={
-                self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]: -1 for valence only, -2 for VA
+                # self.y_labels: batch_inputs[:, -1:],        #ANIMA [CVAE]: -1 for valence only, -2 for VA
                 self.x_input: batch_inputs,
                 self.y_target: batch_targets,
                 self.beta: beta,

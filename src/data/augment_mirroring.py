@@ -4,7 +4,7 @@ import os
 from settings import *
 
 """
-Augment the original training examples by adding antisymmetrical ones. Doupbles the quantity of examples. 
+Augment the original training examples by adding anti-symmetrical ones. Doubles the quantity of examples. 
 The new examples have reversed sign for the joint values of 'HeadYaw', 'HipRoll', swapped values for Arms 
 (RArm to LArm and vice versa).   
 """
@@ -32,12 +32,12 @@ swap_r  = df_tr.loc[:, ['RShoulderPitch', 'RShoulderRoll', 'RElbowRoll', 'RElbow
 df_tr[['LShoulderPitch', 'LShoulderRoll', 'LElbowRoll', 'LElbowYaw', 'LWristYaw', 'LHand']] = swap_r
 df_tr[['RShoulderPitch', 'RShoulderRoll', 'RElbowRoll', 'RElbowYaw', 'RWristYaw', 'RHand']] = swap_l
 
-# Inverse signs for for shoulder roll and elbow roll
+# Inverse signs for for arms roll and yaw joints
 inv_joints = ['LShoulderRoll', 'LElbowRoll', 'LElbowYaw', 'LWristYaw', 'RShoulderRoll', 'RElbowRoll', 'RElbowYaw', 'RWristYaw']
 df_tr.loc[:, inv_joints] = -df_tr.loc[:, inv_joints]
 
 # Change the anim id
-df_tr['id'] = df_tr['id'] + '_tr'
+df_tr['id'] = df_tr['id'] + '_tr
 
 # Add to previous dataframe
 augm_df = pd.concat([df, df_tr], ignore_index=True)

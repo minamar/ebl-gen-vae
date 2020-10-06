@@ -8,8 +8,8 @@ from src.data.post_processing import inverse_norm
     over time for each animation. Top one is for head and torso, middle one for right arm, botom for left arm.  
 """
 
-check_model = '22'
-check_epoch = '-100'
+check_model = '42'
+check_epoch = '-200'
 scaler = 'j_scaler_nao_lim_df13_50fps.pkl'
 x_dataset = 'df14_20fps.csv'
 z_dataset = check_model + check_epoch + '_df14_20fps_mean.csv'

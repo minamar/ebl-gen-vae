@@ -106,7 +106,8 @@ def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feat
     # Get the def of the z interpolant
     df_z_interp = pd.DataFrame(interp)
     cols_list = []
-    for c in range(len(pos_list[0])):
+
+    for c in range(df_z_interp.shape[1]):
         cols_list.append('l' + str(c+1))
     df_z_interp.columns = cols_list
 

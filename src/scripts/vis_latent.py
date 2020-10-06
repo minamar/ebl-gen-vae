@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
     a plot of all the encoded animations in the latent space, color coded per anim and per category  
 """
 set_pub()
-check_model = '61'
-check_epoch_list = ['-100']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
+check_model = '42'
+check_epoch_list = ['-200']  # ['-0','-50','-100','-150','-200','-250','-300','-350','-400','-450','-500']
 scaler = 'j_scaler_nao_lim_df32_25fps.pkl'
-x_dataset = 'df32_25fps.csv'
+x_dataset = 'df14_20fps.csv'
 ccode = 'id'  # How to colorcode the animations in latent space
 save_stuff = False
 all_epochs = True
@@ -22,13 +22,16 @@ dataset_dir = x_dataset.split('.')[0]
 df_x = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, x_dataset), index_col=0)
 # df_x = pd.read_csv(os.path.join(ROOT_PATH, 'data/processed/keyframes/', x_dataset), index_col=0)
 df_x = df_x[~df_x.id.str.contains('_tr')]
-df_x = df_x[~df_x.category.str.contains('Neu/Calm')]
+df_x = df_x[~df_x.category.str.contains('Pos')]
+
+df_x.reset_index(drop=True, inplace=True)
+
 
 # For CVAE
-df_x = merge_with_VA_labels(df_x)
+# df_x = merge_with_VA_labels(df_x)
 x = df_x.drop(columns=['time', 'id', 'category'], inplace=False)
 
-# x = df_x.drop(columns=['time_diff', 'id'], inplace=False)
+# x = df_x.drop(columns=['time', 'id'], inplace=False)
 
 for check_epoch in check_epoch_list:
     # Restore model to get the decoder

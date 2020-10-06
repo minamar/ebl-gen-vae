@@ -12,16 +12,20 @@ import matplotlib.animation as animation
 
 """ Visualize the latent interpolants sampled by interp_multi_pos"""
 
-check_model = '52-200'
+check_model = '42-200'
 check_epoch = '-200'
 
 
 # Directory with sampled anims
-gen_vae_dir = 'iinterp_multi_pos'
+gen_vae_dir = 'interp_multi_pos'
 # All in radians, decoded, normalized
-x_dataset = ['10_dec_bspline.csv', '11_dec_lerp.csv', '12_dec_slerp.csv']
+# x_dataset = ['10_dec_spline.csv', '11_dec_lerp.csv', '12_dec_slerp.csv']
+# # All in latent space
+# z_dataset = ['10_z_spline.csv', '11_z_lerp.csv', '12_z_slerp.csv']
+
+x_dataset = ['15_dec_spline.csv', '17_dec_lerp.csv', '16_dec_slerp.csv']
 # All in latent space
-z_dataset = ['10_z_bspline.csv', '11_z_lerp.csv', '12_z_slerp.csv']
+z_dataset = ['15_z_spline.csv', '17_z_lerp.csv', '16_z_slerp.csv']
 # Animation captured from AnimationPlayer in radians
 x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
@@ -92,8 +96,9 @@ ax.set_ylabel('LD2')
 ax.set_zlabel('LD3')
 
 # ax.set_title('Interpolants in the latent space')
-ax.axis('equal')
-ax.axis('square')
+# ax.axis('equal')
+# ax.axis('square')
+ax.auto_scale_xyz
 ax.legend()
 
 plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
