@@ -410,6 +410,4 @@ def normalize(list_pos):
 
 if __name__ == '__main__':
     dataset = 'df32_25fps.csv'
-# #     differ_duplicate(dataset)
-#     for r in ['3', '4', '5']:
     get_latent_z('54', '-500', dataset, cond=True)
