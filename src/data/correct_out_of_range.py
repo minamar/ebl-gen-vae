@@ -3,8 +3,7 @@ import os
 from settings import *
 
 """
-Takes a dataframe with the keyframes and finds joint values that exceed the limits defined in joints_minmax
-It replaces them with the min max limits
+Detects joint values that exceed the limits defined in joints_minmax and replaces them with the min max limits
 """
 
 # Original keyframes and destination file
