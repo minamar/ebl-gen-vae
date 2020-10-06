@@ -80,6 +80,7 @@ target/
 /reports/
 /src/tfmodellib-master/
 globvar.py
+/references/
 
 # Mac OS-specific storage files
 .DS_Store
