@@ -6,7 +6,7 @@ import os
 from settings import *
 
 """
-Takes a dataframe with motion + LEDs and normalizes the joint values to (0,1).
+For dataframes with motion + LEDs. Normalizes the joint values to (0,1).
 Ignores the time and the leds columns. 
 """
 
