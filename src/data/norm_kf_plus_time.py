@@ -6,10 +6,8 @@ import os
 from settings import *
 
 """
-Takes a keyframe and normalizes the joint values to (0,1).
-Additionally, the time dimension is transformed to difference between subsequent steps.
-The time dimension is not normalized. 
- 
+Normalizes the joint values to (0,1).
+Additionally, the time dimension is transformed to time lag  between subsequent steps.
 """
 
 # Original keyframes and destination file to write normalized keyframes
