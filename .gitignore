@@ -84,7 +84,7 @@ globvar.py
 
 /src/data/comp_datasets.py
 /src/data/downsample.py
-
+/src/data/parse_xar.py
 
 # Mac OS-specific storage files
 .DS_Store
