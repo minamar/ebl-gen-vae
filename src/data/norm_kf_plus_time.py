@@ -6,16 +6,18 @@ import os
 from settings import *
 
 """
-Normalizes the joint values to (0,1).
-Additionally, the time dimension is transformed to time lag  between subsequent steps.
+Normalizes the joint values to (0,1). Additionally, the time dimension is transformed to time lag between 
+subsequent steps.
 """
 
 # Original keyframes and destination file to write normalized keyframes
 x_set = 'df31_25fps.csv'
 dest_x_set = 'df32_25fps.csv'
-scaler_file = 'j_scaler_nao_lim_df13_50fps.pkl'  # Change df number with the one of dest_x_set, and whether it is a 'ds' or 'nao'
+# Change df number with the one of dest_x_set, and whether it is a 'ds' or 'nao'
+scaler_file = 'j_scaler_nao_lim_df13_50fps.pkl'
 
-lims = 'naoqi'  # 'naoqi' to normalize with the full range naoqi limits or 'dataset' to normalize with the dataset range
+# 'naoqi' to normalize with the full range naoqi limits or 'dataset' to normalize with the dataset range
+lims = 'naoqi'
 
 dest_scaler = os.path.join(ROOT_PATH, SCALERS_PATH, scaler_file)
 
@@ -31,14 +33,10 @@ if lims == 'naoqi':
     df_joints.loc[len(df_joints)] = list(joints_minmax[:, 0])
     df_joints.loc[len(df_joints)] = list(joints_minmax[:, 1])
 
-# Train the normalization
+# Normalize the dataset
 scaler = MinMaxScaler(feature_range=(0, 1))
 scaler = scaler.fit(df_joints)
-
-# Normalize the dataset
 normalized = scaler.transform(df_joints)
-
-# Save the scaler for inversing the RNN output values later
 joblib.dump(scaler, dest_scaler)
 
 # Normalizes with naoqi full range limits (joints_minmax in settings.py)
@@ -46,7 +44,7 @@ if lims == 'naoqi':
     # Drop the two last rows containing the min max from the ranges
     normalized = normalized[:-2, :]
 
-# Time dimension transformation: from timestamp to differences between subsequent timestamps
+# Time dimension transformation: from timestamp to time lags between subsequent timestamps
 time_s = df.loc[:, 'time']
 time_diff = time_s[1:].values - time_s[:-1].values
 # Add the missing first element
