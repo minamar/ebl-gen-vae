@@ -1,8 +1,5 @@
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.externals import joblib
 import os
+from sklearn.externals import joblib
 from settings import *
 
 """ 

@@ -1,18 +1,17 @@
-import xml.etree.ElementTree as ET
-import math
-import pandas as pd
 import os
+import xml.etree.ElementTree as ET
+import pandas as pd
 from settings import *
 
 """
-Creates a dataframe with the raw data extracted from the animation .xar files
+Creates a dataframe with the raw joint values extracted from the animation .xar files
 """
 anim_dir = os.path.join(ROOT_PATH, ANIM_DIR)
 dest = os.path.join(ROOT_PATH, RAW_DATA, 'df10_KF.csv')
 
 keyframes = {}
 count = 0
-# Iter the directory with animation files and get the .xar file for each animation
+# Iter the directory with the animation files and get the .xar file for each animation
 for root, dirs, files in os.walk(anim_dir):
     for fi in files:
         if fi.endswith(".xar"):
@@ -79,7 +78,7 @@ for root, dirs, files in os.walk(anim_dir):
             # Dictionary with actuators as keys and list of angles as values
             dict_act_ang = dict((k, []) for k in joints_names)
 
-            # Add to the dictionary the joint positions (in degrees) for this animation
+            # Add the joint positions (in degrees) for this animation to the dictionary
             for act_a in range(len(list_actuators)):
                 dict_act_ang[list_actuators[act_a]].extend(list_angles_deg_all[act_a])
 
@@ -91,11 +90,11 @@ for root, dirs, files in os.walk(anim_dir):
                 # The keyframes numbers for this animation
                 times = [list(i) for i in set(map(tuple, list_frames_all))]
                 if len(times) == 1:
-                    # Add the number of appearence for keyframes in this animation df
+                    # Add the number of appearance for keyframes in this animation df
                     df["keyframe"] = list_frames_all[0]
                     df['id'] = animName
 
-                    # Add df as value yto the keyframes dictionary
+                    # Add df as value to the keyframes dictionary
                     keyframes[animName] = df
 
                 else:

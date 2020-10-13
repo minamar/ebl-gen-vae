@@ -33,7 +33,7 @@ def correct_limits(df):
 # Full df input. Replaces time_diff with time
 def inverse_time(df):
     time_s = abs(df.loc[:, 'time_diff'])
-    # Time dimension transformation: from timestamp to differences between subsequent timestamps
+    # Time dimension transformation: from timestamp to time lags between subsequent timestamps
     time_l = []
 
     for i, v in time_s[1:].iteritems():
@@ -45,11 +45,11 @@ def inverse_time(df):
     return df
 
 
-# Inverses the normalized values using the rescaler
+# Invert the normalized values using the rescaler
 def inverse_norm(df, scaler_pkl):
     path = os.path.join(ROOT_PATH, SCALERS_PATH, scaler_pkl)
     scaler = joblib.load(path)
-    inversed = scaler.inverse_transform(df.loc[:, joints_names])
-    df.loc[:, joints_names] = inversed
+    inverse = scaler.inverse_transform(df.loc[:, joints_names])
+    df.loc[:, joints_names] = inverse
 
     return df
