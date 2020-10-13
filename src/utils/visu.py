@@ -171,7 +171,6 @@ def plot_z_VA():
     p = ax.scatter(df_z_V.loc[:, 'l1'], df_z_V.loc[:, 'l2'], df_z_V.loc[:, 'l3'], c=df_z_V.loc[:, 'valence_mean'], s=df_z_V.loc[:, 'valence_mean']*25, marker='o')
     fig.colorbar(p)
 
-
     df_z_A = df_all.loc[:, ['l1', 'l2', 'l3', 'arousal_mean']]
     fig2 = plt.figure(figsize=(6, 6))
     ax2 = fig2.add_subplot(111, projection='3d')

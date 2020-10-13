@@ -9,7 +9,7 @@ from src.data.post_processing import inverse_norm
 from sklearn.manifold import TSNE
 from splipy import *
 
-# Dimensionality transformation functions ----------------------------------------------------------------
+# Dimensional transform functions ----------------------------------------------------------------
 def tsne(df_anim, ndim):
     """ Takes a df of animation, reduces the 17d to ndim dimensions """
 
@@ -74,7 +74,7 @@ def bspline(z_pos, steps=100):
         return interp
 
     else:
-        print("Too few frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
+        print("Not enough frames. Use 2 frames for Bezier curve or >= 4 for interpolating B-spline")
 
 
 def interp_multi(pos_list, latent, steps, check_model, check_epoch, method, feats_names, cond_AV=None):
@@ -286,7 +286,7 @@ def get_latent_z(check_model, check_epoch, dataset, cond=False):
 # Used once to correct discrepancies in datasets structures ------------------------------------------------------
 def save_category(dataset):
     """ Retrospectively add a category column to the datasets """
-    # Load animation dataset
+
     df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
 
     # Depending on animation library, different handling of category feature
@@ -299,8 +299,8 @@ def save_category(dataset):
 
 
 def differ_duplicate(dataset):
-    """ For Big Library. Some ids are the same. Add the category name as part of the id name to all categories
-        except Emotions
+    """ In the Naoqi animation library some ids are the same. Add the category name as part of the id name
+        to all categories except Emotions.
     """
     df_anim = pd.read_csv(os.path.join(ROOT_PATH, DATA_X_PATH, dataset), index_col=0)
     # Unique ids
@@ -347,7 +347,7 @@ def merge_with_VA_labels(df, lab_file='y_va_cat_aug.csv'):
 
 
 def add_category(df):
-    """ Only for the big animation library. Splits name into category and anim id columns"""
+    """ Only for the Naoqi animation library. Splits name into category and anim id columns"""
     id_df = df['id'].str.split('/', expand=True)
     id_df.drop(columns=[0, 1], inplace=True)  # Drop animations/Stand
 
@@ -364,8 +364,8 @@ def add_category(df):
 
 def v2cat_df(df):
     """
-    Takes the y labels, which contains valence continuous values per animation, and
-    and assigns them with 0, 0.5, 1 which is neg, neu, pos respectively
+    Takes the y labels, which contain valence continuous values per animation, and
+    assigns them with 0, 0.5, 1 which is neg, neu, pos respectively
     """
 
     # Add category based on the v/a score
