@@ -4,7 +4,7 @@ from settings import *
 from src.utils.sampu import interp_multi
 
 """ Samples longitude lines from a spherical grid projected on the 3D latent space.
-    Decodes them into animations.
+    Decodes them into animations with the CVAE.
 """
 
 check_model = '54'

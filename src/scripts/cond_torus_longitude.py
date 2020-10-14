@@ -8,7 +8,7 @@ from settings import *
 from src.utils.sampu import interp_multi, v2cat_value
 
 """ Samples longitude lines from a horn torus grid projected on a 3D latent space.
-    Decodes into the animation space.
+    Decodes into the animation space with the CVAE.
 """
 
 check_model = '63'
