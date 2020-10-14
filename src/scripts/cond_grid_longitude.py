@@ -3,21 +3,22 @@ import json
 from settings import *
 from src.utils.sampu import interp_multi
 
-""" Sample longitude lines from the spherical grid. """
+""" Samples longitude lines from a spherical grid projected on the 3D latent space.
+    Decodes them into animations.
+"""
 
 check_model = '54'
 check_epoch = '-500'
 feats_names = joints_names + leds_keys
 method = 'slerp'
-nsteps = 10    # per segment
+nsteps = 10    # Per segment
 fr = 0.06
 radiuses = [1]  # Sampling radius
 circles = 6  # Parallel to z axis. Equal to x2 longitudes
-lat = 41    # Points on a circe (first and last are the same)
+lat = 41    # Points on a circle (first and last are the same)
 southp = int(lat/2) + 1  # idx to split lat points to form half circle (longitude)
 top_down = True  # Save postures on the longitude from north to south pole if True
 
-# TODO: add param for the model id
 # Save path
 df_path = os.path.join(ROOT_PATH, DATA_SAMP, 'interp_grid_longitude/53-500/l3')
 

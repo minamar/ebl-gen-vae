@@ -1,15 +1,17 @@
-import pandas as pd
 import os
-import json
-from settings import *
-from src.utils.sampu import decode, load_model
-from src.data.post_processing import inverse_norm
+
+import pandas as pd
 import seaborn as sns
+
+from settings import *
+from src.data.post_processing import inverse_norm
+from src.utils.sampu import decode, load_model
+
 sns.set(style="darkgrid")
 
-""" Fix two latent dimensions to 0 and vary the 3rd latent dim. 
-    Save two df for each case (dec and z)
+""" Fixes two latent dimensions to 0 and varies the 3rd latent dim. 
     Range of variation -10, 10, with step 0.5
+    This is to explore if there is something interested learned by each latent dim (disentanglement).
 """
 
 check_model = '42'
@@ -26,7 +28,7 @@ step = 0.1
 latent_range = np.arange(-r, r, step)
 
 for z in z_dim:
-    # Create the latent df with z dim equal to latent range and the rest dim equal to zero.
+    # Creates the latent df with z dim equal to latent range and the rest dim equal to zero.
     data = np.zeros([int(2*r/step), 3])
     df = pd.DataFrame(data, columns=z_dim)
     df[z] = latent_range

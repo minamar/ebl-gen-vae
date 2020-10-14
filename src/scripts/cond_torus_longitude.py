@@ -1,12 +1,15 @@
-import os
 import json
+import math
+import os
+
+import matplotlib.pyplot as plt
+
 from settings import *
 from src.utils.sampu import interp_multi, v2cat_value
-import math
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-""" Sample longitude lines from the spherical grid. Only for 3D latent space """
+""" Samples longitude lines from a horn torus grid projected on a 3D latent space.
+    Decodes into the animation space.
+"""
 
 check_model = '63'
 check_epoch = '-250'

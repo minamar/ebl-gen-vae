@@ -6,19 +6,20 @@ from src.utils.sampu import interp_multi, sel_pos_frame
 import seaborn as sns
 sns.set(style="darkgrid")
 
-""" Sample a multivariate gaussian, directly interpolate them in the latent space, conditional decoding """
+""" Samples a multivariate gaussian and interpolates the samples in the latent space.
+    Returns the decoded latent trajectory using the CVAE decoder. 
+"""
 
 check_model = '63'
 check_epoch = '-250'
 latent_dim = 3
-method = 'spline'  # slerp, lerp, spline
-nsteps = 50   # interpolation steps per segment
+method = 'spline'  # slerp, lerp, or spline
+nsteps = 50   # Interpolation steps per segment
 fr = 0.06
 n_pos = 5   # Key postures
 std_list = [3.5, 4.5]  # Sampling radius
 feats_names = joints_names + leds_keys
-# av_list = [[0, 0], [0.5, 0.5], [1, 1], [0, 0.5], [0, 1], [0.5, 0], [1, 0], [1, 0.5], [0.5, 1]]
-av_list = [[0], [0], [0.5], [0.5], [1], [1]]
+av_list = [[0], [0], [0.5], [0.5], [1], [1]]  # Valence and arousal values for the conditioning
 
 
 gen_vae_dir = 'cond_gaussian_sampling/' + check_model + check_epoch

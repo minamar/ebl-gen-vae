@@ -1,14 +1,18 @@
-import pandas as pd
 import os
-import json
-from settings import *
-from src.utils.sampu import decode, load_model
-from src.data.post_processing import inverse_norm
+
+import pandas as pd
 import seaborn as sns
+
+from settings import *
+from src.data.post_processing import inverse_norm
+from src.utils.sampu import decode, load_model
+
 sns.set(style="darkgrid")
 
 """ Using 5 random samples from a 3d unit gaussian, 2 dims are fixed with the latent standInit and the 3rd dim varies 
-    according to the interpolant   """
+    according to the interpolant. This is to explore if there is something interested learned by each latent dim
+    (disentanglement).
+"""
 
 check_model = '42'
 check_epoch = '-200'

@@ -87,6 +87,7 @@ globvar.py
 /src/data/parse_xar.py
 /src/data/va_scores2category.py
 /src/scripts/example_3d_curve.py
+/src/scripts/interp_grid.py
 /src/scripts/example_double_pendulum.py
 /src/scripts/pic.py
 # Mac OS-specific storage files
