@@ -6,8 +6,9 @@ from src.utils.sampu import interp_multi, sel_pos_frame
 import seaborn as sns
 sns.set(style="darkgrid")
 
-""" Sample a 3d unit gaussian, directly interpolate them in the latent space, decode """
-
+""" Samples a multivariate gaussian and interpolates the samples in the latent space.
+    Returns the decoded latent trajectory using the VAE decoder. 
+"""
 check_model = '42'
 check_epoch = '-200'
 methods = ['slerp']  # slerp, lerp, spline

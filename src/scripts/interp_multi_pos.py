@@ -7,8 +7,8 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 
-"""Given some keyframes numbers (normalized), encode them and interpolate through them in the latent space
-    Save the z interpolants and teh decoded animations in df. 
+"""Given some keyframe numbers (normalized kf), encodes them and interpolates their latent datapoints. 
+    Saves the z interpolants and the decoded animations in a df. 
 """
 check_model = '42'
 check_epoch = '-200'
@@ -34,13 +34,6 @@ for frame in frames:
         pos, id_anim = sel_pos_frame(df, frame)
         pos_list.append(pos)  # List of lists
         id_anim_list.append(id_anim + '_f' + str(frame))
-
-
-# # Normalization scaler
-# pos_list.append(normalize([0.184811, 0, -0.00595384, -0.00569751, -0.00260995,-0.0117632, -0.00302939, 0.026704, -1.06408,  0.205128,-0.00904274,  0.0118227, 0.00282017,0.0266633,-1.05311, -0.17415, 0.00901861]))
-# id_anim_list.append('Hands_up')
-
-
 
 # Get the radians frames (dec, denorm) and the latent interpolants
 df_dec_interp, df_z_interp = interp_multi(pos_list, latent, nsteps, check_model, check_epoch, method, joints_names)
@@ -69,7 +62,6 @@ files_dict[file_id] = {
     'animations': id_anim_list,
     'frames': frames
 }
-
 with open(json_file, 'w') as fd:
     fd.write(json.dumps(files_dict))
 

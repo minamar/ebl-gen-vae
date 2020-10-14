@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 
 
-""" Select two animations, encode them in the latent space and blend them. Then decode and save 
+""" Select two animations, encode them in the latent space and blend them. Then decode into the animation space. 
 """
 check_model = '47'
 check_epoch = '-500'

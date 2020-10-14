@@ -4,6 +4,8 @@ from settings import *
 from src.utils.sampu import load_model, encode, decode
 from src.data.post_processing import inverse_norm
 
+""" Trivially encodes a set of animations and then decodes them to inspect the quality of the reconstruction.
+"""
 
 check_model = '54'
 check_epoch = '-500'
