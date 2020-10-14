@@ -80,7 +80,7 @@ else:
 for latent_size in latent_range:
     prefetch = batch
     start = time.time()
-    # create the model
+    # The model
     conf = VAEConfig(
             in_size=66,
             latent_size=latent_size,
@@ -100,7 +100,7 @@ for latent_size in latent_range:
     )
     model = VAE(conf)
 
-    # run the training
+    # Training
     for t in range(n_epoch):
 
         # Warm-up

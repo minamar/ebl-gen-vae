@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="darkgrid")
 
+""" Select some encoded animations, average their z means and decode.
+    Exploratory fuction to see if there are trends within animation categories in the latent space. 
+"""
 
 check_model = '5'
 check_epoch = '-500'
@@ -25,7 +28,7 @@ df_z_means = pd.read_csv(os.path.join(ROOT_PATH, DATA_Z_PATH, z_dataset), index_
 # Get all z_means of anims in the category
 df_z_cat = df_z_means.loc[df_z_means['category'] == category, :]
 df_z_cat = df_z_cat[~df_z_cat.id.str.contains('_tr')]
-df_z_cat = df_z_cat[df_z_cat['id'].isin(['Angry_3', 'AskForAttention_3'])]
+# df_z_cat = df_z_cat[df_z_cat['id'].isin(['Angry_3', 'AskForAttention_3'])]
 
 # z dimension
 z_dim = df_z_cat.shape[1] - 2

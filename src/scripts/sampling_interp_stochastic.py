@@ -44,8 +44,8 @@ df_z_mean_new = df_z_mean.copy(deep=True)
 df_z_mean_new.iloc[:, 0:z_dim] = df_z_mean.iloc[:, 0:z_dim].subtract(df_z_sigma.iloc[:, 0:z_dim].multiply(eps))
 
 if select:
-    category = 'Neg/Exc' #'Pos/Exc'
-    anim = 'Fearful_1' #'Confident_1'
+    category = 'Neg/Exc'
+    anim = 'Fearful_1'
     # anim, category = sel_anim_id(df_anim)
     anim_id_list = [anim]
 else:

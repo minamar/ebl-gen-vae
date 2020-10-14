@@ -8,7 +8,7 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 """ For a specific animation or all animations within the dataset it selects a z_mean posture every interp_steps
-    and applies interp_steps slerp interpolation between them. THe output is decoded to a generated animation(s).
+    and applies interp_steps slerp interpolation between them. The output is decoded to a generated animation(s).
 """
 
 check_model = '5'
@@ -42,7 +42,6 @@ else:
     anim_id_list = [x for x in anim_id_list if '_tr' not in x]
 
 for anim_id in anim_id_list:
-
     df_z_anim = df_z_mean.loc[df_z_mean['id'] == anim_id, :]
     category = df_z_anim['category'].values[0]
     df_z_anim.drop(columns=['id', 'category'], inplace=True)

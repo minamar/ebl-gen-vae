@@ -62,4 +62,3 @@ if save_stuff:
     output_df.to_csv(os.path.join(ROOT_PATH, 'data/generated/generated_VAE/vae_sampled/interp_npostures_anim',
                                   check_model + check_epoch + '-' + str(
                                       interp_steps) + 'st-' + anim_id + '.csv'))
-
