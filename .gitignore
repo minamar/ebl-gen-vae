@@ -91,5 +91,6 @@ globvar.py
 /src/scripts/interp_grid.py
 /src/scripts/example_double_pendulum.py
 /src/scripts/pic.py
+
 # Mac OS-specific storage files
 .DS_Store

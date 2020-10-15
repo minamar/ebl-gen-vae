@@ -1,51 +1,55 @@
-# ebl-gen-vae
+# Generating Robotic Emotional Body Language Using VAEs 
 
-The goal of this project is to create emotional body language animations for Pepper, by utilizing algorithms of deep learning. 
-As a training set we use a small set of animations that have been designed by professional robot animators with a creative process approach. 
-We want to explore if we can use generative models such as Variational Autoencoder, 
-or LSTMs to learn underlying properties of these examples and generate new animations.
 
-### Training Set 
-The initial training set contains 36 animations of different duration each
-(in seconds min=2.46, max=25.18, and mean=5.88). The animators select different points of a timeline
-to position keyframes that represent robot postures (configurations of 17 joints values).
-These keyframes can be thought as the most salient postures of a motion. 
-Subsequently the intermediate configurations are derived with Bezier interpolation through the keyframes.
+## Overview
 
-### Labels
-The animators have also assigned a descriptive tag to each of these animations, such as "happy" or "sad". 
-However these tags were assigned in a subjective way, following the discrete emotions theory. We conducted an experiment where we asked participants
-to evaluate each animation in terms of valence (how positive or negative the emotion 
-depicted is) and arousal (the intensity of the expression), following the dimensional theory
- of emotion. These scores range from 0 to 1. Besides the animation tag, and the valence/arousal continuous values, 
-we also created another categorical label. We discretized the valence/arousal space in three
- levels for valence (positive, neutral, negative) and three levels for arousal (excited, calm, tired),
- and we derived 3x3 combinations of the two metrics, that is 9 categories such as Neutral/Calm, Positive/Excited, Negative/Tired etc.
-Therefore we have three different options to label the training set.
+We train a Conditional Variational Autoencoder 
+for the generation of novel Robotic Emotional Body Language (REBL) for a Pepper
+robot. The training set has been compiled with a selection of 36 hand-designed 
+animations from a broader animation library created by 
+[SoftBank Robotics](https://www.softbankrobotics.com).  
 
-### Data preprocessing 
-The training data have been corrected for joint values exceeding the limits. On the robot, these 
-values are corrected automatically, but replacing them with the limits beforehand was necessary for 
-the training because in the next step we normalized the values in (0,1), since different joints have different 
-ranges. Finally, we augmented the training set with the mirrored version of each animation 
-with respect to left and right orientation. Without this augmentation of the training set, 
-the generated animations where biased towards the one side of the body.
-   
-### Variational Autoencoder with all time-frames (previously branch EBLgen_VAE)
-In this branch, the goal is to experiment with a variational autoencoder 
-for the generation of new animations. The VAE cannot capture the
-temporal dynamics of the animations as the LSTM does, but it can learn a compact latent 
-representation from the training set which we can sample with interpolation 
-to generate new animations. For this experiment we use all the time-frames, not just the keyframes. For the implementation of the VAE network we use 
-the library nhemion/tfmodellib/vae.py with tensorflow which constructs the encoder and decoder with MLPs.
-Different sampling strategies and attribute vectors are tested.
+The selected animations were chosen to convey emotion through body motion, 
+eye LEDs colour and patterns, and non-linguistic sounds. A user study (N=20) 
+was conducted to derive reliable core affect labels for each animation. Core 
+affect is defined by two dimensions: valence (displeased to pleased), 
+and arousal (deactivated to activated). Valence and arousal ratings
+were collected as continuous values in the interval [0,1] and they were aggregated 
+across participants, for each animation [[1]](#1). 
 
-### Future work
- - Variational autoencoder
-   - Mix latent vectors between functional and emotional animations
-   - Interface for latent space sampling
-   - Pytorch implementation of the VAE
- - VAE + LSTM 
-  
+Subsequently, the audio data were excluded and the rest of the modalities 
+(motion and eye LEDs) were recorded with a sampling rate of 25 fps, augmented, 
+and used to train an emotion-agnostic Variational Autoencoder [[2]](#2), 
+and later a Conditional Variational Autoencoder for the generation of targeted 
+emotion animations [[3]](#3). A second user study was conducted to evaluate a set
+of generated animations in terms of valence, arousal, and dominance [[3]](#3). 
 
-    
+
+## References
+
+<a id="1">[1]</a> 
+Marmpena M., Lim, A., and Dahl, T. S. (2018). How does the robot feel? Perception of valence and
+arousal in emotional body language. Paladyn, Journal of Behavioral Robotics, 9(1), 168-182.
+[DOI](https://doi.org/10.1515/pjbr-2018-0012)
+
+<a id="2">[2]</a> 
+Marmpena M., Lim, A., Dahl, T. S., and Hemion, N. (2019). Generating robotic emotional body
+language with Variational Autoencoders. In Proceedings of the 8th International Conference
+on Affective Computing and Intelligent Interaction (ACII), pages 545–551.
+[DOI](https://doi.org/10.1109/ACII.2019.8925459)
+
+<a id="3">[3]</a> 
+Marmpena M., Garcia, F., and Lim, A. (2020). Generating robotic emotional body language of
+targeted valence and arousal with Conditional Variational Autoencoders. In Companion of
+the 2020 ACM/IEEE International Conference on Human-Robot Interaction, HRI ’20, page
+357–359. [DOI](https://doi.org/10.1145/3371382.3378360)
+
+
+
+
+
+
+
+
+
+
