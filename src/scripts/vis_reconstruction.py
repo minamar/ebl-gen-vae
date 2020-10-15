@@ -48,4 +48,3 @@ for anim_id in anim_id_list:
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
         fig.savefig(os.path.join(plot_path, anim_id + '.eps'), bbox_inches='tight', format='eps', dpi=1000)
-

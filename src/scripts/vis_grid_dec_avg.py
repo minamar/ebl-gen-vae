@@ -86,7 +86,7 @@ ax[1].legend(title='radius', loc='center left', bbox_to_anchor=(0.96, 0.5))
 
 plt.tight_layout()
 plt.subplot.hspace = 0.05
-fig.savefig('/home/mina/Dropbox/APRIL-MINA/PUBS/ACII2019/IEEE2019-EBL-GEN-VAE-v2/jpgs/fig6.png', bbox='tight', dpi=100)
+fig.savefig('...PUBS/ACII2019/IEEE2019-EBL-GEN-VAE-v2/jpgs/fig6.png', bbox='tight', dpi=100)
 plt.show()
 
 # Frequency analysis

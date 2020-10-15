@@ -47,8 +47,6 @@ latent_mean, latent_sigma = model_restored.sess.run([model_restored.latent_mean,
                                                     feed_dict={model_restored.x_input: x,
                                                                model_restored.bn_is_training: False})
 
-# model_restored.sess.run(model.y_output, feed_dict={model_restored.latent_layer: np.random.randn((100,5))})
-
 latent_sigma_mean = latent_sigma.mean(axis=0)
 
 dim = latent_mean.shape[1]

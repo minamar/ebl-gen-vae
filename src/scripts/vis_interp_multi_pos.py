@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 from mpl_toolkits import mplot3d
 import matplotlib.animation as animation
-# import seaborn as sns
-# sns.set(style="whitegrid")
 
 """ Visualize the latent interpolants sampled by interp_multi_pos"""
 
@@ -19,15 +17,11 @@ check_epoch = '-200'
 # Directory with sampled anims
 gen_vae_dir = 'interp_multi_pos'
 # All in radians, decoded, normalized
-# x_dataset = ['10_dec_spline.csv', '11_dec_lerp.csv', '12_dec_slerp.csv']
-# # All in latent space
-# z_dataset = ['10_z_spline.csv', '11_z_lerp.csv', '12_z_slerp.csv']
-
 x_dataset = ['15_dec_spline.csv', '17_dec_lerp.csv', '16_dec_slerp.csv']
 # All in latent space
 z_dataset = ['15_z_spline.csv', '17_z_lerp.csv', '16_z_slerp.csv']
 # Animation captured from AnimationPlayer in radians
-x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
+x_naoqi = pd.read_csv('.../EXP3_Generation/data/naoqi_interp_rec/465_Loving_01.csv', index_col=0)
 
 # Normalization scaler
 scaler_pkl = 'j_scaler_nao_lim_df13_50fps.pkl'

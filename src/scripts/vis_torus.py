@@ -53,4 +53,3 @@ ax.set_zlim(-3, 3)
 # ax.plot(x.flatten('F'), y.flatten('F'), z.flatten('F'))
 
 plt.show()
-n= 1

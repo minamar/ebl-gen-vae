@@ -9,8 +9,7 @@ import seaborn as sns
 sns.set(style="whitegrid")
 
 """ Visualize the decoded joints trajectories for each interpolation. 
-    In tsne mode it is done by dimensionality reduction
-    In avg mode, average across joints
+    In tsne mode it is done by dimensionality reduction. In avg mode, average across joints.
 """
 
 check_model = '42'
@@ -22,7 +21,7 @@ gen_vae_dir = 'interp_multi_pos'
 # All in radians, decoded, normalized
 x_dataset = ['17_dec_lerp.csv', '16_dec_slerp.csv', '15_dec_spline.csv'] # Always order as lerp, slerp, spline
 # Animation captured from AnimationPlayer in radians
-x_naoqi = pd.read_csv('/home/mina/Dropbox/APRIL-MINA/EXP3_Generation/data/naoqi_interp_rec/multi_interp_10-12.csv', index_col=0)
+x_naoqi = pd.read_csv('/.../EXP3_Generation/data/naoqi_interp_rec/multi_interp_10-12.csv', index_col=0)
 
 # Plot settings
 set_pub()

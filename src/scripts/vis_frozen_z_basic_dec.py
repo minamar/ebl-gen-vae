@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
-""" Visualize the decoded joints trajectories for one letent dim varying and the rest fixed to zero. 
+""" Visualize the decoded joints trajectories for one latent dim varying and the rest fixed to zero. 
 """
 
 check_model = '42'

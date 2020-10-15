@@ -11,7 +11,7 @@ ax = plt.axes(projection='3d')
 method = 'slerp'
 nsteps = 10  # per segment
 fr = 0.06
-radiuses = [3]  # Sampling radius [3]  #[
+radiuses = [3]  # Sampling radius
 circles = 6  # Parallel to z axis. Equal to x2 longitudes
 lat = 41  # Points on a circe (first and last are the same)
 southp = int(lat / 2) + 1  # idx to split lat points to form half circle (longitude)
@@ -32,6 +32,4 @@ for radius in radiuses:
 ax.set_xlabel('LD1')
 ax.set_ylabel('LD2')
 ax.set_zlabel('LD3')
-# ax.axis('equal')
-# ax.axis('square')
 plt.show()
